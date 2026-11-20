@@ -1,0 +1,222 @@
+{
+  "linear": {
+    "frameId": "11:7202",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#090A0C",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Inter",
+      "style": "Medium",
+      "px": 26
+    },
+    "reviewPatch": {
+      "width": 135,
+      "height": 33,
+      "radius": 6,
+      "fontPx": 12
+    }
+  },
+  "anthropic": {
+    "frameId": "110:40146",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#F8F6EF",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Georgia",
+      "style": "Bold",
+      "px": 48
+    },
+    "reviewPatch": {
+      "width": 151,
+      "height": 38,
+      "radius": 7,
+      "fontPx": 13
+    }
+  },
+  "appllama": {
+    "frameId": "110:40835",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#FFFFFF",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Inter",
+      "style": "Bold",
+      "px": 38
+    },
+    "reviewPatch": {
+      "width": 127,
+      "height": 32,
+      "radius": 6,
+      "fontPx": 13
+    }
+  },
+  "hallmark": {
+    "frameId": "110:41131",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#F9F3E8",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Georgia",
+      "style": "Regular",
+      "px": 58
+    },
+    "reviewPatch": {
+      "width": 156,
+      "height": 44,
+      "radius": 0,
+      "fontPx": 13
+    }
+  },
+  "impeccable": {
+    "frameId": "110:40223",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#F2F3EE",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Inter",
+      "style": "Bold",
+      "px": 38
+    },
+    "reviewPatch": {
+      "width": 135,
+      "height": 38,
+      "radius": 4,
+      "fontPx": 13
+    }
+  },
+  "lapa": {
+    "frameId": "110:40694",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#FDFCF9",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Georgia",
+      "style": "Regular",
+      "px": 42
+    },
+    "reviewPatch": {
+      "width": 146,
+      "height": 38,
+      "radius": 5,
+      "fontPx": 13
+    }
+  },
+  "mobbin": {
+    "frameId": "110:42516",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#FFFFFF",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Inter",
+      "style": "Semi Bold",
+      "px": 32
+    },
+    "reviewPatch": {
+      "width": 328,
+      "height": 40,
+      "radius": 7,
+      "fontPx": 14
+    }
+  },
+  "promax": {
+    "frameId": "110:40356",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#DCE1D8",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "IBM Plex Sans",
+      "style": "SemiBold",
+      "px": 35
+    },
+    "reviewPatch": {
+      "width": 157,
+      "height": 40,
+      "radius": 5,
+      "fontPx": 15
+    }
+  },
+  "refero": {
+    "frameId": "110:40586",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#1B1F22",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Inter",
+      "style": "Semi Bold",
+      "px": 34
+    },
+    "reviewPatch": {
+      "width": 126,
+      "height": 36,
+      "radius": 7,
+      "fontPx": 13
+    }
+  },
+  "stitch": {
+    "frameId": "110:40468",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#F8FAFB",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Noto Serif",
+      "style": "Bold",
+      "px": 36
+    },
+    "reviewPatch": {
+      "width": 272,
+      "height": 44,
+      "radius": 6,
+      "fontPx": 14
+    }
+  },
+  "v0": {
+    "frameId": "110:41242",
+    "frameSize": [
+      1440,
+      940
+    ],
+    "rootFill": "#FFFFFF",
+    "title": {
+      "text": "Duplicate checkout events",
+      "family": "Inter",
+      "style": "Bold",
+      "px": 35
+    },
+    "reviewPatch": {
+      "width": 162,
+      "height": 42,
+      "radius": 7,
+      "fontPx": 14
+    }
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "key": "lapa",
+  "name": "Lapa Ninja",
+  "direction": "笔记式调查报告与页边批注",
+  "lens": "沿 Lapa Ninja 收藏的 Bear 和 Notion 找到作者产品实图, 采用 Bear 的笔记索引与行内证据, 将 Agent 讨论放入 Notion 式页边栏",
+  "figma": {
+    "design": "https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=110-40694",
+    "spec": "https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=87-39344"
+  },
+  "refs": [
+    {
+      "title": "Lapa Ninja · Bear (2016)",
+      "url": "https://www.lapa.ninja/post/bear/",
+      "kind": "图库官方收录 · 作品索引",
+      "note": "归入 App 与 Productivity, 标注灰色与白色, 此项用于确认来源, 编辑器细节核对 Shiny Frog 的实图"
+    },
+    {
+      "title": "Shiny Frog · Bear 2 editor",
+      "url": "https://bear.app/faq/whats-new-in-bear-2/",
+      "kind": "独立作品 · 作者产品实图",
+      "note": "Polar Bears 笔记的暗色窄栏、白色编辑区和正文内的表格, 选中笔记用红色短竖线",
+      "image": {
+        "sha256": "9450fedf15929bcf396e582925c4623769510ea582eec7e9fb592e0280216e7f",
+        "url": "https://bear.app/faq/images/B2_1.jpg"
+      }
+    },
+    {
+      "title": "Shiny Frog · Editor typography",
+      "url": "https://bear.app/faq/typography-options/",
+      "kind": "同一作品 · 作者设置实图",
+      "note": "设置将正文字体、标题字体、代码字体、行宽和段落间距分别定义, 本稿自行定值",
+      "image": {
+        "sha256": "9dd8cc272a50b8496148ad01f3b4064c6a467177ce07e47c4dde20d5393a4408",
+        "url": "https://bear.app/faq/images/typography.png"
+      }
+    },
+    {
+      "title": "Lapa Ninja · Notion (2024)",
+      "url": "https://www.lapa.ninja/post/notion-3/",
+      "kind": "图库官方收录 · 作品索引",
+      "note": "归入 Productivity 与 Software, 可查看当年官网各页面, 产品批注细节核对 Notion Help"
+    },
+    {
+      "title": "Notion · Comments sidebar",
+      "url": "https://www.notion.com/help/comments-mentions-and-reminders",
+      "kind": "独立作品 · 作者产品实图",
+      "note": "原图用段落高亮连接右侧评论, 作者与回复沿单一列排列, 拟用同一个行内标记关联重复事件和审阅讨论",
+      "image": {
+        "sha256": "750e51396d1464c8dd1ce06e4df3f8ae1a6cdd0e655c25294c8b6cded707d89d",
+        "url": "https://images.ctfassets.net/spoqsaf9291f/fDcdtQsRfGIjwHteGukNP/e6160ab9aa0b8a777520573ef05e96df/Comments_sidebar.png"
+      }
+    },
+    {
+      "title": "Sentry · Breadcrumbs drawer",
+      "url": "https://docs.sentry.io/product/issues/issue-details/breadcrumbs/",
+      "kind": "图库另收录的作品 · 作者产品实图",
+      "note": "错误、控制台、交互和网络请求按时间排列, 详细数据在对应行展开, 可对照时间戳与触发原因",
+      "image": {
+        "sha256": "1fab7ace08553c9e093914be4d41f0a625bed7a9e7eb2efb90614a54b8ba8bac",
+        "url": "https://raw.githubusercontent.com/getsentry/sentry-docs/master/docs/product/issues/issue-details/breadcrumbs/img/breadcrumbs-drawer.png"
+      },
+      "galleryUrl": "https://www.lapa.ninja/post/sentry/"
+    },
+    {
+      "title": "Notion · Respond to suggested edits",
+      "url": "https://www.notion.com/help/suggested-edits",
+      "kind": "同一作品 · 作者审阅界面实图",
+      "note": "Brand Campaign 中选中的段落与右侧建议对应, 审阅与回复控件集中在建议旁",
+      "image": {
+        "sha256": "d48827190594d9f8f45ff81c5f0dbc74ff06752e2d3523ff1af694fb40ed4a2a",
+        "url": "https://images.ctfassets.net/spoqsaf9291f/7pfnhfB3faOjSzeiMhBzcR/98b5e875a26211168cc19e31b5118383/Group_82.png"
+      }
+    }
+  ],
+  "rules": [
+    {
+      "axis": "笔记索引宽度",
+      "value": "左侧 202 px",
+      "why": "Bear 编辑器将笔记导航收进窄栏, 本稿把索引宽度限于单行短标题",
+      "ref": 2
+    },
+    {
+      "axis": "工作区底色",
+      "value": "正文 #FDFCF9, 索引 #282A2A",
+      "why": "取自 Bear 侧栏与阅读区的明暗关系, 色值为本稿选定",
+      "ref": 2
+    },
+    {
+      "axis": "报告标题字阶",
+      "value": "Georgia Regular 42/50 px",
+      "why": "Bear 允许标题和正文分别设置字体, 调查标题使用单独的阅读字阶",
+      "ref": 3
+    },
+    {
+      "axis": "正文行长",
+      "value": "最大 650 px, Inter 16/26 px",
+      "why": "依据可独立调整的行宽设置, 长句只占报告列",
+      "ref": 3
+    },
+    {
+      "axis": "页内章节间距",
+      "value": "相邻章节预留 36 px 以上",
+      "why": "借鉴 Bear 正文内照片、文字、表格的垂直阅读顺序, 用空白处理章节过渡",
+      "ref": 2
+    },
+    {
+      "axis": "选中笔记标记",
+      "value": "3 × 32 px 陶红竖线 #CD786B",
+      "why": "复核 Polar Bears 选中行, 沿用其书签式位置, 色值与尺寸为本稿选定",
+      "ref": 2
+    },
+    {
+      "axis": "证据行高",
+      "value": "44 px, 12 px 等宽时间戳",
+      "why": "Bear 的表格与正文同处一页, 保持两次发射记录的数字对齐",
+      "ref": 2
+    },
+    {
+      "axis": "重复项下划线",
+      "value": "#EDBD9E 暖色 3 px, 下方单个评论标记",
+      "why": "Notion 将被评论的段落局部高亮, 用于关联右侧正在讨论的重复事件",
+      "ref": 5
+    },
+    {
+      "axis": "批注栏宽度",
+      "value": "368 px, 左右各 28 px 内距",
+      "why": "Notion 将上下文批注置于正文右侧窄栏, 可在阅读证据时查看处理情况",
+      "ref": 5
+    },
+    {
+      "axis": "继续提问入口",
+      "value": "批注栏底部固定 72 px 高输入框",
+      "why": "Notion 线程的回复与原评论共用一栏, 保留当前调查语境",
+      "ref": 5
+    }
+  ],
+  "avoid": [
+    "不要在调查报告上方设置宣传主图、营销标语或超大 CTA",
+    "不要把证据行、回复和检验结果分别包成多层投影卡片",
+    "不要让正文、代码、时间戳共用一个标题字阶",
+    "不要在整行或整栏铺满橙色, 页内强调只关联被评论的事件"
+  ],
+  "export": {
+    "file": "design.png",
+    "size": [
+      1440,
+      940
+    ],
+    "sha256": "e3bf678ab1b1fcc8bbf136bb18bbfbc1e56135036f08cdc44a7c21d1a6b284ed"
+  },
+  "reviewPatch": {
+    "box": [
+      1100,
+      626,
+      146,
+      38
+    ],
+    "cornerRadius": 5,
+    "fontSize": 13
+  },
+  "qa": {
+    "textLayers": 60,
+    "contrastSamples": 60,
+    "minimumContrast": 5.316,
+    "minimumContrastText": "RL-238",
+    "thresholdAtMinimum": 4.5,
+    "belowContrastThreshold": 0,
+    "geometryFlags": 0,
+    "pendingVisualFlags": 0,
+    "requiredTextFound": [
+      "Quarry",
+      "RL-238",
+      "Duplicate checkout events",
+      "TEST-8072",
+      "09:41:12.083",
+      "09:41:12.516",
+      "checkout_complete",
+      "checkout-event.patch",
+      "Review patch"
+    ],
+    "linkedReferenceUrls": 7,
+    "referenceImages": 5
+  }
+}

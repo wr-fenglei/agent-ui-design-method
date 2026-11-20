@@ -1,0 +1,175 @@
+{
+  "key": "v0",
+  "name": "v0 Design Mode",
+  "direction": "左侧选区检查器与右侧事件预览",
+  "lens": "把「点击预览中的对象, 在左侧查看属性与证据, 继续询问该对象」的编辑流程用于结算事件审查",
+  "figma": {
+    "design": "https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=110-41242",
+    "spec": "https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=110-39852"
+  },
+  "refs": [
+    {
+      "title": "Vercel 文档 · 在预览中选中 h3",
+      "url": "https://v0.app/docs/design-mode#selecting-elements",
+      "kind": "官方产品截图",
+      "note": "左侧设计面板约占图宽 30%, 右侧预览为主体, h3 标签贴在蓝色选区上方, 左侧显示同名对象",
+      "image": {
+        "sha256": "4088a96c3dbea533811c3f5d4b4bfcf09d5036c84d83a7459c41e1e83b798a3f"
+      }
+    },
+    {
+      "title": "Vercel 文档 · 针对 TabsList 提问",
+      "url": "https://v0.app/docs/design-mode",
+      "kind": "官方产品截图",
+      "note": "左侧属性按 Layout、Size、Border 等分组, 底部编辑框重复显示蓝色 TabsList 标签, 右侧页面保留选区",
+      "image": {
+        "sha256": "8970c092c271c3cd8bd51d0992cc4b84ddaad22722fc7d5865d5569d4b849952"
+      }
+    },
+    {
+      "title": "Flavio Copes · StreamLine 组件实作",
+      "url": "https://flaviocopes.com/v0-tutorial/",
+      "kind": "独立作者实作 · 2026-07-23",
+      "note": "作者用 v0 构建 StreamLine 页面并演示 Design Mode, 图中的两根粗蓝箭头是作者批注, 可见原生的 CardHeader 标记、选择框和左侧属性",
+      "image": {
+        "sha256": "911252e4f4fcdc2e0d48334da6c22aab8d38ce11cf33be3ed0c8f3d883509b6a"
+      }
+    },
+    {
+      "title": "Marc Andrews · 工具目录实测",
+      "url": "https://marcandrews.com/v0-by-vercel-review-2026-ai-powered-react-ui-generator/",
+      "kind": "独立作者实测 · 页面于 2026-11-04 更新",
+      "note": "作者展示自己用 v0 构建的工具目录, 局部截图可见左侧图层树和 Agent 输出、右侧实时页面, 作者记录当次属性检查器没有填充",
+      "image": {
+        "sha256": "5f77e9d65da5099473ff8c2d4ca5ed9bd165a4e0b6f2f0550c28b2b577f1a52f"
+      }
+    },
+    {
+      "title": "Vercel · 产品负责人实机演示",
+      "url": "https://www.youtube.com/watch?v=dX4BufGeRwg&t=215s",
+      "kind": "官方流程视频 · 2026-01-05",
+      "note": "03:35 进入 Design Mode, 04:00 展示视口切换, 采用同一运行预览承载可选对象和编辑反馈"
+    },
+    {
+      "title": "Jacob Paris · 深色检查器的颜色菜单",
+      "url": "https://community.vercel.com/t/edit-ui-with-v0s-design-mode/17477",
+      "kind": "Vercel 员工发布的实机截图 · 2025-07-31",
+      "note": "原文 Visual Editing 段落截图, Color 字段下展开浮层, 顶部有 Tailwind 与 Custom 标签和搜索, 当前 background 以整行底色和红色样片标出",
+      "image": {
+        "sha256": "5b6f92b08ea365f11bf8f12aa6cabcee1250c9c5e12fa286cd160c54e5de395a",
+        "url": "https://community.vercel.com/internal/api/forum/legacy-uploads/short-url/2g0AvEnE8fT4H9Cf9iPzHUCKQm7.png"
+      }
+    }
+  ],
+  "rules": [
+    {
+      "axis": "主区域比例",
+      "value": "拟定左 392 px、右 1016 px, 占窗口内宽 28% 与 72%",
+      "why": "官方图约 30% 为左侧工具区, 右侧预览占主要横向空间",
+      "ref": 1
+    },
+    {
+      "axis": "对象选框",
+      "value": "拟定 1.5 px #246BE4 描边, 选中完整事件证据区",
+      "why": "官方图的蓝线沿选中对象本身的边界绘制",
+      "ref": 1
+    },
+    {
+      "axis": "对象名的位置",
+      "value": "拟定在预览选区上沿放 24 px 高标签, 左面板顶部和输入框沿用同一对象名",
+      "why": "官方图将 TabsList 名称匹配到预览和输入框, 可确认后续指令作用对象",
+      "ref": 2
+    },
+    {
+      "axis": "分组边界",
+      "value": "拟定 #E1E5E9 的 1 px 横线, 组间 16 px",
+      "why": "属性按类别纵向排列, 用横线划分 Typography、Color 和 Background",
+      "ref": 3
+    },
+    {
+      "axis": "字段对齐",
+      "value": "拟定左侧标注统一从 18 px 起排, 值从 142 px 起排",
+      "why": "从属性面板统一边缘和成对字段的排版提取, 让多行字段可比较",
+      "ref": 3
+    },
+    {
+      "axis": "字体层级",
+      "value": "拟定问题标题 35 px, 区段标题 15 px, 字段 13 px, 事件元数据 13 px 等宽",
+      "why": "截图用标题与字段字号区分层级, 本稿用等宽区分事件名和时间戳",
+      "ref": 1
+    },
+    {
+      "axis": "输入框停靠",
+      "value": "拟定左侧底部距两边各 18 px 的 110 px 高输入框",
+      "why": "独立作者的输入框在属性区下方呈现, 顶部显示 CardHeader 作用范围",
+      "ref": 3
+    },
+    {
+      "axis": "活动信息密度",
+      "value": "拟定两条 Agent 动作, 单行高 28 px, 显示原始重放和修补重放",
+      "why": "独立作者图把简短的验证动作放在预览旁, 本稿保留与测试决策相关的步骤",
+      "ref": 4
+    },
+    {
+      "axis": "状态标识",
+      "value": "拟定只有 Duplicate 用琥珀色、Passed 用绿色, 选择态蓝色为独立语义",
+      "why": "官方图用蓝色对应选区, 本稿给测试结果独立语义并加文字",
+      "ref": 1
+    },
+    {
+      "axis": "预览上下文",
+      "value": "拟定同屏对照 Recorded trace 和 Patched replay, 两组共享事件列对齐",
+      "why": "官方演示在工作预览内复看操作效果, 本稿按相同事件结构显示两次运行",
+      "ref": 5
+    }
+  ],
+  "avoid": [
+    "不要增设右侧检查器或并排指标卡, 把选区检查和对话入口放在同一左栏",
+    "不要用全行蓝色填充遮住证据, 只描边目标并标注对象名",
+    "不要把网络请求次数写成已发送事件数, 保留原始首发和重试的两个时间戳",
+    "不要给未发送事件补造发送时间, 修补结果以两次重试共发出一次事件显示",
+    "不要把用户的审查动作标成应用或部署补丁, 采用 Review patch",
+    "不要使用渐变、装饰箭头和超出功能所需的状态徽章"
+  ],
+  "export": {
+    "file": "design.png",
+    "size": [
+      1440,
+      940
+    ],
+    "sha256": "7fc9a7a26c4a54faafebf3e665ff9ecfea51bb836b1c2779163278b972d88cb9"
+  },
+  "reviewPatch": {
+    "box": [
+      1196,
+      813,
+      162,
+      42
+    ],
+    "cornerRadius": 7,
+    "fontSize": 14
+  },
+  "qa": {
+    "textLayers": 74,
+    "contrastSamples": 74,
+    "minimumContrast": 4.771,
+    "minimumContrastText": "Conversation",
+    "thresholdAtMinimum": 4.5,
+    "belowContrastThreshold": 0,
+    "geometryFlags": 0,
+    "pendingVisualFlags": 0,
+    "requiredTextFound": [
+      "Quarry",
+      "RL-238",
+      "Duplicate checkout events",
+      "TEST-8072",
+      "09:41:12.083",
+      "09:41:12.516",
+      "checkout_complete",
+      "checkout-event.patch",
+      "Review patch"
+    ],
+    "linkedReferenceUrls": 6,
+    "referenceImages": 5
+  }
+}

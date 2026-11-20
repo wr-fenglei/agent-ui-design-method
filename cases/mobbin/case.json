@@ -1,0 +1,186 @@
+{
+  "key": "mobbin",
+  "name": "Mobbin MCP",
+  "direction": "事件脉冲图与日志回放台",
+  "lens": "把 Sentry 的时间分布、可展开日志行与 Braintrust 的旁栏详情用于同一次重试调查, 用毫秒位置连接两次发送",
+  "figma": {
+    "design": "https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=110-42516",
+    "spec": "https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=110-40064"
+  },
+  "refs": [
+    {
+      "title": "Mobbin 收录 · Sentry Web Logs",
+      "url": "https://mobbin.com/explore/screens/607edc87-38b9-43d0-a58c-10d1a60485d9",
+      "kind": "Mobbin 官方收录的 Sentry 产品画面",
+      "note": "原图保留 Mobbin 署名, 单屏从上到下是时间筛选、count(logs) 图与日志表, 本稿采用该阅读顺序",
+      "image": {
+        "sha256": "f0c56f77ccea8035919da329fb0f2aaa2bede5338095637acdcc9c06d0ce7d3c"
+      }
+    },
+    {
+      "title": "Braintrust · Application logs in a trace",
+      "url": "https://www.braintrust.dev/blog/application-logs",
+      "kind": "独立产品方的功能发布与实图",
+      "note": "在原文第二张实图中, 左侧原始日志仍可见, 右侧并列树、明细和 Metadata, 本稿保留调查视图, 以会话和产物占用右侧",
+      "image": {
+        "sha256": "41dfbababc910dfc0e2e74b9937838a441f9abd0b9c25c332892dbe19197b7a8"
+      }
+    },
+    {
+      "title": "Sentry · 展开一条日志",
+      "url": "https://github.com/getsentry/sentry-docs/blob/master/docs/product/logs/img/LogsExpanded.png",
+      "kind": "独立产品方文档原图",
+      "note": "行首展开符下出现同一条记录的属性与关联值, 本稿把重复发送的订单键和 retry 标志归入该行",
+      "image": {
+        "sha256": "034831e70bc2fb07ce249e69c80cb5db809f39ffe7cb340d5e17bbe393829114"
+      }
+    },
+    {
+      "title": "Mobbin 收录 · Braintrust Web Logs",
+      "url": "https://mobbin.com/explore/screens/16fc833f-6d16-4385-aa12-b845670e0891",
+      "kind": "Mobbin 官方收录的 Braintrust 产品画面",
+      "note": "时间分布下方按行排列多字段记录, 部分行带浅色提示, 本稿的默认记录、重复发送与通过状态分别独立编码",
+      "image": {
+        "sha256": "572c5f79bc160061c697106140ff898cedbbb57c16d9d859512c59c1f57b47b9"
+      }
+    },
+    {
+      "title": "Sentry · 搜索指定日志消息",
+      "url": "https://github.com/getsentry/sentry-docs/blob/master/docs/product/logs/img/LogSearchRawText.png",
+      "kind": "独立产品方文档原图",
+      "note": "单个搜索框收窄消息, 图表和结果行同时留在画面中, 本稿示例过滤 checkout_complete 并给出命中条数",
+      "image": {
+        "sha256": "d018c660f93636b36be61b09cb4533a809b33e20b4325db688c060cc563eb1db"
+      }
+    },
+    {
+      "title": "Mobbin · MCP 官方演示",
+      "url": "https://mobbin.com/mcp",
+      "kind": "工具官方演示与访问说明",
+      "note": "演示通过同流程实图抽取单个设计决定, 本轮通过 Mobbin 公开收录页核对 Sentry 和 Braintrust, 未登录付费 MCP, 两个产品均为独立参照"
+    }
+  ],
+  "rules": [
+    {
+      "axis": "主视图区顺序",
+      "value": "上方时间分布, 下方可展开日志表",
+      "why": "Sentry 实图在日志记录前展示 count(logs), 图与行对应同一过滤结果",
+      "ref": 1
+    },
+    {
+      "axis": "旁栏宽度",
+      "value": "376 px",
+      "why": "Braintrust 打开记录后仍保留左侧原始记录, 本稿独立分配此宽度给 Agent 会话",
+      "ref": 2
+    },
+    {
+      "axis": "标题字号",
+      "value": "32 px",
+      "why": "Sentry 把页面标题置于筛选之前, 本稿用此字号区分调查标题与日志工具",
+      "ref": 1
+    },
+    {
+      "axis": "时间数字字型",
+      "value": "IBM Plex Mono Regular 13 px",
+      "why": "原图的时间是表格字段, 本稿使用等宽数字保证两次发送的毫秒位对齐",
+      "ref": 3
+    },
+    {
+      "axis": "图表横轴比例",
+      "value": "1 秒对应整个绘图区, 4 个 250 ms 区间",
+      "why": "沿用原图按线性时间分桶的结构, 本稿用 1 秒窗口区分相隔 433 ms 的记录",
+      "ref": 1
+    },
+    {
+      "axis": "筛选器高度",
+      "value": "36 px",
+      "why": "原图筛选器与表格同屏, 本稿把消息条件放入单行以保留图表空间",
+      "ref": 5
+    },
+    {
+      "axis": "原始日志行高",
+      "value": "44 px",
+      "why": "Braintrust 一行保留多个字段, 本稿两条记录统一行高以便按列比较",
+      "ref": 4
+    },
+    {
+      "axis": "详情展开位置",
+      "value": "紧接选中行下边缘, 间隔 0 px",
+      "why": "Sentry 的展开字段属于该记录, 本稿把 order.id 和 retry 与第二条记录放在同一个容器",
+      "ref": 3
+    },
+    {
+      "axis": "模块水平内边距",
+      "value": "32 px",
+      "why": "原图的过滤、图表和结果共享左起点, 本稿按单一内容边线排列",
+      "ref": 1
+    },
+    {
+      "axis": "警示前景色",
+      "value": "#A64719",
+      "why": "Braintrust 用着色行分辨异常, 本稿将同一颜色交给重复发送的脉冲及文字",
+      "ref": 4
+    },
+    {
+      "axis": "表面圆角",
+      "value": "8 px",
+      "why": "Braintrust 以轻边界划分过滤与表格内容, 本稿限制圆角用于成组工具和表格外框",
+      "ref": 2
+    },
+    {
+      "axis": "状态冗余编码",
+      "value": "重复写 Duplicate, 回放写 Passed, 各配文字及不同图标",
+      "why": "Braintrust 详情同时显示错误级别和图标, 本稿让颜色之外也能判断结果",
+      "ref": 2
+    }
+  ],
+  "avoid": [
+    "不要拿图库菜单或 MCP 宣传首页代替 Agent 工作区",
+    "不要在事件量图里补画没有发生的采样点",
+    "不要把两次发送画成等距流程卡, 横坐标须保留 433 ms 的实际间隔",
+    "不要在每条日志上铺同一种警示色, 或用红色暗示测试失败",
+    "不要通过全屏遮罩打开 Agent 会话, 复核补丁时两条日志须保持可见",
+    "不要把原始实图中的 14 天数据范围、样例消息或品牌标识当成本稿任务数据"
+  ],
+  "export": {
+    "file": "design.png",
+    "size": [
+      1440,
+      940
+    ],
+    "sha256": "e4866a7a729b99cdf9e447a2cb6ada46883dd61dc7d402e68c94da88422509c2"
+  },
+  "reviewPatch": {
+    "box": [
+      1088,
+      673,
+      328,
+      40
+    ],
+    "cornerRadius": 7,
+    "fontSize": 14
+  },
+  "qa": {
+    "textLayers": 71,
+    "contrastSamples": 71,
+    "minimumContrast": 5.436,
+    "minimumContrastText": "Duplicate",
+    "thresholdAtMinimum": 4.5,
+    "belowContrastThreshold": 0,
+    "geometryFlags": 0,
+    "pendingVisualFlags": 0,
+    "requiredTextFound": [
+      "Quarry",
+      "RL-238",
+      "Duplicate checkout events",
+      "TEST-8072",
+      "09:41:12.083",
+      "09:41:12.516",
+      "checkout_complete",
+      "checkout-event.patch",
+      "Review patch"
+    ],
+    "linkedReferenceUrls": 6,
+    "referenceImages": 5
+  }
+}
