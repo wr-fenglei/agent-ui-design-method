@@ -1,16 +1,29 @@
-# 用真实界面参考制作 Mac Agent 设计稿
+# 和 Agent 一起画界面
 
-Quarry 是一套供人审阅 Agent 调查结果的 Mac 界面, 各稿围绕同一个问题展开, 一笔订单为何触发两次结算事件, 用户需要哪些证据才能决定是否审阅补丁
+假设一个订单被记了两次, 你打开一张图, 能找到这两条记录, 看懂 Agent 改了什么, 也知道还有哪个按钮等你按, 这就是我们想画的界面
 
-保留的五个方案共用这项任务和用户选定的 Still 组件, 各自从空白画板设计, 事件回放用时间线标出两次发送相隔 433 ms, 双记录核证按字段对齐同一订单的两条记录, 补丁审阅把修改内容和本地回放放在一起, 可以在相同数据和审批状态下比较五种布局
+**第一次用, 先看两张图**
 
-[![五个 Quarry 界面, 依次为事件回放、事件日志、重试路径、双记录核证、补丁审阅](evidence/quarry-still.jpg)](cases/index.md)
-
-| 你想做什么 | 从这里开始 |
+| 先看底稿 | 再看它怎样变 |
 |---|---|
-| 看五份设计稿、各自的规范, 或对照早期十个来源 | [设计案例](cases/index.md) |
-| 了解之前几轮为何被撤下, 哪些做法可以复用 | [制作方法与复盘](docs/method.md) |
-| 给设计者或 Agent 布置下一轮任务 | [可复制的简报](templates/study-brief.md) |
-| 查 Linear 在各轮影响了什么, 哪些问题仍需对照实验 | [Linear 的影响与证据](docs/linear-influence.md) |
+| [![Linear 风格的 Quarry 底稿, 左边选问题, 中间看证据, 右边审改动](evidence/linear.png)](foundations/linear.md) | [![双记录核证, 同一订单的两条记录并排显示](references/quarry-compare.png)](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68697) |
+| 左边选一个问题, 点开就能找到证据和下一步 [看底稿](foundations/linear.md) | 右图把两条记录摆在一起, 借了 Still 的选中行和步骤按钮 [看五种画法](cases/index.md) |
 
-十来源案例另附绘图源、原尺寸 PNG 和测量记录, 可在仓库根目录运行 `python3 tools/verify.py` 离线校验该组归档
+**元设计**是画新界面时用的底稿, 目前只有一套, 就是上面左边的 Quarry
+
+**参考图**可以只借一处, 比如学它怎样画一个按钮, 或怎样标出被选中的那一行
+
+| 你现在想做什么 | 打开哪里 |
+|---|---|
+| 从底稿开始, 分清要保留什么、哪里可以变 | [看 Linear 原图和 Quarry 底稿](foundations/linear.md) |
+| 找一个按钮、一行列表或一块玻璃的样子 | [挑参考图, 学怎么找原图](references/README.md) |
+| 把喜欢的细节放进新图, 发现不合适时改小样 | [做小样、解决冲突、检查成稿](docs/method.md) |
+| 让 Agent 开始画 | [复制设计简报](templates/study-brief.md) |
+
+**可以直接给 Agent 一句话**
+
+> 请按这个仓库的简报设计一个 Mac 界面, 我想用它来 [填入任务], 用 Linear 底稿安排内容, 从参考库选适合这个任务的细节, 先做一个原尺寸的小样, 再交付整张设计稿和检查后的预览图
+
+想看 Agent 换一道题能画出什么, 打开[文件改名样稿](examples/file-rename/preview.png), 看看两张同名照片的区别放在哪里
+
+想看以前做过什么, 可以打开[五份 Still 方案和十个来源案例](cases/index.md), 关于 Linear 对成稿的影响, 另有[测量记录](docs/linear-influence.md)

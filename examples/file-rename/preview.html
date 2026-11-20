@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Folio · 文件改名预览</title>
+    <style>
+:root {
+  font-family: -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+  color: #202437;
+  background: #ececf1;
+  font-synthesis: none;
+  --ink: #232737;
+  --muted: #575e70;
+  --line: #e0e1e8;
+  --violet: #5949aa;
+  --lav: #f0eefb;
+  --warm: #a5541b;
+  --panel: #fafafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,h2,h3,p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+}
+
+.logo {
+  width: 31px;
+  height: 31px;
+  display: inline-block;
+  border-radius: 8px;
+  background: #5c4caf;
+  position: relative;
+  box-shadow: inset 0 0 0 1px #4b3e98;
+}
+
+.logo i {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 14px;
+  height: 17px;
+  border: 1.55px solid #fff;
+  border-radius: 2px;
+  transform: skewY(-12deg);
+}
+
+.logo i:first-child {
+  transform: translate(3px,-2px) skewY(-12deg);
+  opacity: .6;
+}
+
+.logo i:nth-child(2) {
+  background: #5c4caf;
+}
+
+.logo i:nth-child(2):after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 5px;
+  height: 1px;
+  background: #f4f2ff;
+}
+
+.panel-title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  height: 32px;
+}
+
+.num {
+  font: 600 12px/23px ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing: .04em;
+  color: #65579a;
+  background: #eeeaf8;
+  height: 23px;
+  padding: 0 6px;
+  border-radius: 5px;
+}
+
+.panel-title h2,.right-title {
+  font-size: 21px;
+  line-height: 30px;
+  font-weight: 600;
+  letter-spacing: -.03em;
+}
+
+.fn {
+  font-size: 16px;
+  line-height: 23px;
+  font-weight: 550;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .005em;
+}
+
+.fn em {
+  font-style: normal;
+  color: #57459a;
+}
+
+.meta {
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.namehead,.name-row {
+  display: grid;
+  grid-template-columns: minmax(0,.99fr) 44px minmax(0,1fr);
+  align-items: center;
+}
+
+.namehead {
+  color: #5d6270;
+  font-size: 13px;
+  font-weight: 550;
+  height: 35px;
+  padding: 0 19px;
+}
+
+.name-row {
+  border: 1px solid transparent;
+  border-bottom-color: #e3e4eb;
+  height: 72px;
+  padding: 0 18px;
+}
+
+.name-row.selected {
+  background: var(--lav);
+  border-color: #b7abdf;
+  border-radius: 8px;
+}
+
+.name-row:last-child {
+  border-bottom-color: transparent;
+}
+
+.source-file {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.row-arrow {
+  font-size: 18px;
+  color: #77778c;
+  line-height: 30px;
+}
+
+.file-icon {
+  flex: none;
+  width: 33px;
+  height: 39px;
+  display: inline-block;
+  position: relative;
+  color: #4b669c;
+}
+
+.file-icon:before {
+  content: "";
+  position: absolute;
+  inset: 0 2px 0 1px;
+  border: 1.2px solid #98a9c9;
+  border-radius: 4px;
+  background: #f6f9ff;
+  clip-path: polygon(0 0,68% 0,100% 25%,100% 100%,0 100%);
+}
+
+.file-icon i {
+  position: absolute;
+  right: 2px;
+  top: 0;
+  width: 11px;
+  height: 11px;
+  border-left: 1px solid #98a9c9;
+  border-bottom: 1px solid #98a9c9;
+  background: #dce6f8;
+  clip-path: polygon(0 0,100% 100%,0 100%);
+}
+
+.file-icon b {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 31px;
+  text-align: center;
+  font: 700 8px/14px Menlo,monospace;
+  letter-spacing: .05em;
+}
+
+.file-icon.txt {
+  color: #6d5f40;
+}
+
+.file-icon.txt:before {
+  border-color: #b9ac8b;
+  background: #fffcf4;
+}
+
+.file-icon.txt i {
+  border-color: #b9ac8b;
+  background: #eee7d5;
+}
+
+.approval {
+  padding: 20px;
+  border: 1px solid #d8d4e7;
+  background: #f5f4fb;
+  border-radius: 12px;
+}
+
+.approval-title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border: 2px solid #6c5aac;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.approval p {
+  font-size: 14px;
+  line-height: 23px;
+  color: #53566a;
+  margin: 6px 0 16px;
+}
+
+.approval button {
+  height: 48px;
+  background: #58479e;
+  color: #fff;
+  border-radius: 8px;
+  border: 1px solid #4c3b91;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.approval button b {
+  font: 400 20px/1 -apple-system,sans-serif;
+}
+
+.spec {
+  width: 1440px;
+  height: 940px;
+  padding: 52px 80px;
+  background: #f6f5fa;
+}
+
+.spec-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #d8d8e2;
+}
+
+.spec-top strong {
+  font-size: 21px;
+  letter-spacing: -.7px;
+}
+
+.spec-top>span:nth-last-child(2) {
+  color: #616174;
+  font-size: 15px;
+  border-left: 1px solid #cecedb;
+  padding-left: 15px;
+  margin-left: 4px;
+}
+
+.spec-dim {
+  margin-left: auto;
+  color: #616174;
+  font: 12px Menlo,monospace;
+}
+
+.spec-header {
+  margin: 34px 0;
+}
+
+.spec-header h1 {
+  font-size: 37px;
+  font-weight: 600;
+  letter-spacing: -.07em;
+}
+
+.spec-header p {
+  font-size: 15px;
+  color: #5d5f72;
+  margin-top: 10px;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 48px;
+}
+
+.spec-kicker {
+  font-size: 13px;
+  font-weight: 600;
+  color: #605779;
+  margin-bottom: 12px;
+  letter-spacing: .02em;
+}
+
+.spec-component {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 25px;
+}
+
+.sample-rows {
+  margin-top: 12px;
+}
+
+.lower {
+  margin-top: 26px;
+}
+
+.sample-action {
+  width: 354px;
+}
+
+.spec-aside {
+  border-left: 1px solid #d6d5e0;
+  padding-left: 30px;
+}
+
+.spec-ref h3 {
+  font-size: 17px;
+  margin: 18px 0 12px;
+  line-height: 24px;
+}
+
+.spec-ref img {
+  display: block;
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.spec-ref p,.spec-note {
+  color: #55596c;
+  font-size: 14px;
+  line-height: 23px;
+  margin: 10px 0 18px;
+}
+
+.spec-note {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.quarry {
+  width: 292px;
+}
+
+.still {
+  width: 310px;
+}
+
+.desktop {
+  background: radial-gradient(ellipse at 0% 25%,#e6eae9 0,transparent 67%),radial-gradient(ellipse at 93% 85%,#d9d8e8 0,transparent 68%),#ebe9ee;
+  width: 1440px;
+  height: 940px;
+  padding: 32px 40px;
+}
+
+.window {
+  height: 100%;
+  border-radius: 17px;
+  background: #fff;
+  border: 1px solid #c4c5ce;
+  box-shadow: 0 10px 34px rgba(44,39,66,.12),0 1px 2px rgba(44,39,66,.07);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chrome {
+  height: 60px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  border-bottom: 1px solid #dedfe5;
+  background: #faf9fc;
+}
+
+.traffic {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 25px;
+}
+
+.traffic i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.08);
+  background: #ed8883;
+}
+
+.traffic i:nth-child(2) {
+  background: #efc775;
+}
+
+.traffic i:nth-child(3) {
+  background: #88ba91;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.brand .logo {
+  width: 28px;
+  height: 28px;
+}
+
+.brand .logo i {
+  left: 7px;
+  top: 7px;
+}
+
+.brand b {
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -.7px;
+}
+
+.toolbar-title {
+  font-size: 14px;
+  color: #616274;
+  margin-left: 18px;
+  padding-left: 18px;
+  border-left: 1px solid #d5d4de;
+}
+
+.workspace-tag {
+  margin-left: auto;
+  border: 1px solid #d6d5df;
+  background: #f3f2f6;
+  color: #575b6a;
+  border-radius: 5px;
+  padding: 4px 9px;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.task {
+  padding: 27px 38px 28px;
+  background: #fff;
+  flex: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #626478;
+}
+
+.breadcrumb span {
+  color: #646a78;
+  font-weight: 400;
+}
+
+.folder {
+  display: inline-block;
+  width: 16px;
+  height: 11px;
+  position: relative;
+  border: 1.4px solid #757588;
+  border-radius: 2px;
+  margin-right: 1px;
+}
+
+.folder:before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -1px;
+  width: 7px;
+  height: 3px;
+  border: 1.4px solid #757588;
+  border-bottom: 0;
+  border-radius: 2px 2px 0 0;
+  background: #fff;
+}
+
+.task h1 {
+  margin: 12px 0 6px;
+  font-size: 39px;
+  letter-spacing: -.055em;
+  font-weight: 600;
+  line-height: 49px;
+}
+
+.task p {
+  font-size: 16px;
+  line-height: 25px;
+  color: #5f6277;
+}
+
+.body-grid {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 376px;
+  flex: 1;
+  min-height: 0;
+}
+
+.evidence {
+  padding: 30px 35px 30px 38px;
+}
+
+.sec-intro,.list-title {
+  display: flex;
+  align-items: center;
+}
+
+.sec-intro {
+  gap: 12px;
+}
+
+.sec-intro h2 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 31px;
+  letter-spacing: -.04em;
+}
+
+.count {
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 19px;
+  border-radius: 5px;
+  padding: 2px 7px;
+}
+
+.warm {
+  background: #f8ead9;
+  color: #89501d;
+}
+
+.collision {
+  margin-top: 16px;
+  border: 1px solid #dfdae1;
+  background: #faf9fa;
+  border-radius: 11px;
+  padding: 18px 22px 20px;
+}
+
+.mapping-labels,.merge {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 92px minmax(0,1fr);
+}
+
+.mapping-labels {
+  font-size: 13px;
+  line-height: 19px;
+  color: #5e6071;
+  margin-bottom: 11px;
+}
+
+.mapping-labels span:last-child {
+  grid-column: 3;
+}
+
+.origin {
+  display: grid;
+  gap: 9px;
+}
+
+.origin>div {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  height: 43px;
+  background: #fff;
+  border: 1px solid #dddde6;
+  padding: 0 13px;
+  border-radius: 6px;
+}
+
+.origin strong {
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: .005em;
+  font-weight: 550;
+}
+
+.origin .file-icon {
+  transform: scale(.62);
+  transform-origin: center;
+  margin-left: -5px;
+  margin-right: -6px;
+}
+
+.same {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  align-self: center;
+  padding: 12px 17px;
+  background: #fcf3e8;
+  border: 1px solid #dcb78e;
+  border-radius: 7px;
+}
+
+.alert {
+  color: #a75c22;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 20px;
+  text-align: center;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid #ae6a32;
+  border-radius: 50%;
+}
+
+.same>div {
+  display: grid;
+  gap: 3px;
+}
+
+.same strong {
+  font-size: 19px;
+  font-weight: 550;
+  line-height: 25px;
+}
+
+.same>div span {
+  color: #79502e;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.wire {
+  position: relative;
+}
+
+.wire i {
+  position: absolute;
+  left: 0;
+  top: 21px;
+  bottom: 21px;
+  width: 50%;
+  border: 1.5px solid #aa97a0;
+  border-left: 0;
+  border-radius: 0 7px 7px 0;
+}
+
+.wire b {
+  position: absolute;
+  left: 50%;
+  right: 6px;
+  top: 50%;
+  height: 1.5px;
+  background: #aa97a0;
+}
+
+.wire b:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  border-top: 1.5px solid #aa97a0;
+  border-right: 1.5px solid #aa97a0;
+  transform: rotate(45deg);
+}
+
+.list-title {
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 23px;
+  margin-bottom: 10px;
+}
+
+.check-result {
+  font-size: 13px;
+  color: #3c6958;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.tiny-check {
+  font: 600 10px/14px -apple-system,sans-serif;
+  text-align: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #6d9280;
+}
+
+.review {
+  padding: 27px 25px 25px;
+  border-left: 1px solid #dedee7;
+  background: #f9f8fb;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.agent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agent-mark {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #d5cee7;
+  display: grid;
+  place-items: center;
+  color: #6755a3;
+  border-radius: 8px;
+  background: #eeebf8;
+  font: 20px/1 -apple-system,sans-serif;
+}
+
+.agent h2 {
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 600;
+}
+
+.reason {
+  margin: 22px 0;
+  padding: 0 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.reason h3 {
+  font-size: 22px;
+  line-height: 31px;
+  letter-spacing: -.04em;
+  font-weight: 600;
+}
+
+.reason p {
+  font-size: 15px;
+  line-height: 25px;
+  color: #575b6e;
+  margin-top: 8px;
+}
+
+.reason b {
+  font-weight: 600;
+  color: #49445e;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: #5c537a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-label .dot {
+  background: #8170b8;
+  border: 0;
+  width: 7px;
+  height: 7px;
+}
+
+.detail-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 8px;
+}
+
+.detail-name .file-icon {
+  transform: scale(.76);
+  transform-origin: left center;
+  margin-right: -7px;
+}
+
+.detail-name strong {
+  font-size: 16px;
+  line-height: 23px;
+  font-weight: 550;
+}
+
+.inspector dl {
+  font-size: 14px;
+  line-height: 22px;
+  margin: 0;
+}
+
+.inspector dl>div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #e8e7ec;
+}
+
+.inspector dl>div:last-child {
+  border: 0;
+}
+
+.inspector dt {
+  color: #5b5e71;
+}
+
+.inspector dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.suffix {
+  color: #57459a;
+  font-weight: 600;
+}
+
+.review .approval {
+  margin-top: auto;
+}
+
+:root {
+  --violet: #353a44;
+  --ink: #232737;
+}
+
+.logo,.logo i:nth-child(2) {
+  background: #38404a;
+}
+
+.logo {
+  box-shadow: inset 0 0 0 1px #303843;
+}
+
+.chrome {
+  background: #fafafa;
+}
+
+.review {
+  background: #fafafb;
+}
+
+.agent-mark {
+  background: #edf0f1;
+  border-color: #d5dadd;
+  color: #424a56;
+}
+
+.detail-label {
+  color: #575e69;
+}
+
+.detail-label .dot,.dot {
+  background: #58616c;
+  border-color: #58616c;
+}
+
+.reason b,.suffix,.fn em {
+  color: #37404b;
+}
+
+.fn em {
+  font-weight: 700;
+}
+
+.name-row.selected .fn em {
+  color: #51428d;
+}
+
+.approval {
+  background: #f1f2f3;
+  border-color: #d5d7da;
+}
+
+.approval button {
+  background: #333b47;
+  border-color: #232b36;
+}
+
+.approval-title,.approval p {
+  color: #343c48;
+}
+
+.approval-title .dot {
+  background: transparent;
+  border-color: #58616c;
+}
+
+.spec {
+  background: #f7f7f9;
+}
+
+.spec-grid {
+  grid-template-columns: 941px 1fr;
+  gap: 24px;
+}
+
+.spec-component {
+  padding: 24px 15px;
+}
+
+.sample-action {
+  width: 325px;
+}
+
+.spec-aside {
+  padding-left: 22px;
+}
+
+.spec-kicker {
+  color: #505968;
+}
+
+.spec-top>span:nth-last-child(2),.spec-header p {
+  color: #575e68;
+}
+
+.origin .file-icon b,.detail-name .file-icon b {
+  display: none;
+}
+
+.origin .file-icon:after,.detail-name .file-icon:after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 9px;
+  bottom: 10px;
+  height: 7px;
+  border-bottom: 1.5px solid #768ba9;
+  border-left: 1.5px solid #768ba9;
+  transform: skewY(-26deg);
+}
+    </style>
+  </head>
+  <body>
+    <main class="desktop">
+      <div class="window">
+        <div class="chrome">
+          <div class="traffic" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+          <div class="brand">
+            <span class="logo" aria-hidden="true"><i></i><i></i></span>
+            <b>Folio</b>
+          </div>
+          <div class="toolbar-title">文件整理 Agent</div>
+          <div class="workspace-tag">样例数据</div>
+        </div>
+        <header class="task">
+          <div class="breadcrumb"><i class="folder" aria-hidden="true"></i>下载 <span>/</span> 海岸踏勘</div>
+          <h1>文件改名预览</h1>
+          <p>为这个文件夹里的 2 张照片和 1 份笔记整理名称</p>
+        </header>
+        <div class="body-grid">
+          <section class="evidence">
+            <div class="sec-intro">
+              <h2>初始建议中的重名</h2>
+              <span class="count warm">1 组冲突</span>
+            </div>
+            <div class="collision" aria-label="两个原文件的初始建议都是海岸.jpg">
+              <div class="mapping-labels">
+                <span>当前文件名</span>
+                <span>初始建议</span>
+              </div>
+              <div class="merge">
+                <div class="origin">
+                  <div>
+                    <span aria-hidden="true" class="file-icon jpg"><i></i><b>JPG</b></span>
+                    <strong>DSC_0841.jpg</strong>
+                  </div>
+                  <div>
+                    <span aria-hidden="true" class="file-icon jpg"><i></i><b>JPG</b></span>
+                    <strong>DSC_0876.jpg</strong>
+                  </div>
+                </div>
+                <div class="wire" aria-hidden="true">
+                  <i></i>
+                  <b></b>
+                </div>
+                <div class="same">
+                  <span class="alert">!</span>
+                  <div>
+                    <strong>海岸.jpg</strong>
+                    <span>两个文件名相同</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="list-title">
+              <div class="sec-intro">
+                <h2>最终改名建议</h2>
+              </div>
+              <span class="check-result"><i class="tiny-check">✓</i>3 个新名称互不重复</span>
+            </div>
+            <div class="names" role="table" aria-label="最终改名建议">
+              <div class="namehead" role="row">
+                <span role="columnheader">当前文件名</span>
+                <span></span>
+                <span role="columnheader">建议的新文件名</span>
+              </div>
+              <div role="row" class="name-row selected">
+                <div role="cell" class="source-file">
+                  <span aria-hidden="true" class="file-icon jpg"><i></i><b>JPG</b></span>
+                  <div>
+                    <div class="fn">DSC_0841.jpg</div>
+                    <div class="meta">拍摄于 08:12</div>
+                  </div>
+                </div>
+                <div class="row-arrow" aria-hidden="true">→</div>
+                <div role="cell">
+                  <div class="fn">海岸<em>-0812</em>.jpg</div>
+                  <div class="meta">已加入拍摄时间</div>
+                </div>
+              </div>
+              <div role="row" class="name-row ">
+                <div role="cell" class="source-file">
+                  <span aria-hidden="true" class="file-icon jpg"><i></i><b>JPG</b></span>
+                  <div>
+                    <div class="fn">DSC_0876.jpg</div>
+                    <div class="meta">拍摄于 17:46</div>
+                  </div>
+                </div>
+                <div class="row-arrow" aria-hidden="true">→</div>
+                <div role="cell">
+                  <div class="fn">海岸<em>-1746</em>.jpg</div>
+                  <div class="meta">已加入拍摄时间</div>
+                </div>
+              </div>
+              <div role="row" class="name-row ">
+                <div role="cell" class="source-file">
+                  <span aria-hidden="true" class="file-icon txt"><i></i><b>TXT</b></span>
+                  <div>
+                    <div class="fn">现场笔记.txt</div>
+                    <div class="meta">文本文件</div>
+                  </div>
+                </div>
+                <div class="row-arrow" aria-hidden="true">→</div>
+                <div role="cell">
+                  <div class="fn">海岸-记录<em></em>.txt</div>
+                  <div class="meta">按内容命名</div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <aside class="review">
+            <div class="agent">
+              <span class="agent-mark" aria-hidden="true">✦</span>
+              <h2>Agent 方案</h2>
+            </div>
+            <div class="reason">
+              <h3>用拍摄时间区分照片</h3>
+              <p>保留共同名称「海岸」, 分别追加 <b>0812</b> 和 <b>1746</b>, 笔记按内容命名</p>
+            </div>
+            <div class="inspector">
+              <div class="detail-label"><span class="dot"></span>当前选中的文件</div>
+              <div class="detail-name">
+                <span aria-hidden="true" class="file-icon jpg"><i></i><b>JPG</b></span>
+                <strong>DSC_0841.jpg</strong>
+              </div>
+              <dl>
+                <div>
+                  <dt>时间来源</dt>
+                  <dd>照片 EXIF</dd>
+                </div>
+                <div>
+                  <dt>拍摄时间</dt>
+                  <dd>08:12</dd>
+                </div>
+                <div>
+                  <dt>追加的文字</dt>
+                  <dd class="suffix">-0812</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="approval">
+              <div class="approval-title"><span class="dot"></span>等待你确认</div>
+              <p>3 个文件仍保留原名, 确认后将一起改名</p>
+              <button type="button" aria-label="确认并改名 3 个文件, 静态样例">确认并改名 3 个文件 <b aria-hidden="true">→</b></button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
