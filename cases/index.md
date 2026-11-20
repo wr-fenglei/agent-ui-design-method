@@ -1,6 +1,14 @@
 # Mac Agent 设计稿与规范
 
-两组都是 1440 × 940 的 Mac 工作台, 一笔订单在 433 ms 内发出两次结算事件, Agent 提交修补建议和验证结果, 由人审阅补丁
+先看这三份带研究过程的案例, 可以从一处成稿追到它使用的原件、尺寸和对照试验
+
+| 想看什么 | 研究入口 |
+|---|---|
+| Apple 的玻璃怎样从左栏延伸到全窗 | [全窗统一左栏材质, 三版对照和制作过程](apple-glass.md) |
+| 表格、按钮、输入框的尺寸怎样定 | [shadcn/ui 与 Untitled UI 成稿下方的规范板](../references/component-studies.md) |
+| 成屏里的一个控件怎样回到主组件和基础样式 | [Linear 的 Foundations、Components 和 Screens](../foundations/linear.md) |
+
+下列两组都是 1440 × 940 的 Mac 工作台, 一笔订单在 433 ms 内发出两次结算事件, Agent 提交修补建议和验证结果, 由人审阅补丁
 
 ## Quarry × Still 五稿
 

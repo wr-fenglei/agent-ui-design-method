@@ -1,6 +1,8 @@
 # 想画哪一块, 就找哪一块
 
-先说出眼前的问题, 比如「我想让人看出选中了哪一行」, 再打开对应图片, 先看那一行, 再看它的上下两行
+要看一份参考如何变成整套设计, 先打开 [Apple 全窗案例](../cases/apple-glass.md)、[shadcn/ui 与 Untitled UI 的研究板](component-studies.md) 或 [Linear 原稿三页](../foundations/linear.md)
+
+要补找一个局部, 先说出眼前的问题, 比如「我想让人看出选中了哪一行」, 再打开对应图片, 先看那一行, 再看它的上下两行
 
 ## 从这五处开始
 
@@ -9,7 +11,7 @@
 | [<img src="../foundations/linear-source.png" width="165" alt="截图审查工作台">](../foundations/linear-source.png)<br>**Linear** · 从一排问题里选一个, 看完详情再做决定 | [基准原图](../foundations/linear-source.png) · [原 Figma](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-29) · [Linear 官方待审队列](https://linear.app/docs/triage) | [Quarry 元设计图](../evidence/linear.png) · [可编辑稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=11-7202) |
 | [<img src="originals/shadcn-sidebar.png" width="165" alt="官方侧栏样例">](originals/shadcn-sidebar.png)<br>**shadcn/ui** · 侧栏的一行有多高, 图标与字隔多远 | [官网侧栏截图](originals/shadcn-sidebar.png) · [能点开的官方示例](https://ui.shadcn.com/view/new-york-v4/dashboard-01) | [Quarry 应用图](shadcn-ui.png) · [可编辑稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=47-20650) · [原尺寸组件](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=47-20892) |
 | [<img src="originals/untitled-buttons.png" width="165" alt="不同强调程度的按钮">](originals/untitled-buttons.png)<br>**Untitled UI** · 两个按钮放一起, 怎么看出哪个是主要动作 | [官网按钮截图](originals/untitled-buttons.png) · [官方按钮](https://www.untitledui.com/react/components/buttons) · [官方输入框](https://www.untitledui.com/react/components/inputs) | [Quarry 应用图](untitled-ui.png) · [可编辑稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=50-21410) · [原尺寸组件](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=50-22310) |
-| [<img src="originals/apple-maps.jpg" width="165" alt="地图上的玻璃侧栏">](originals/apple-maps.jpg)<br>**Apple Liquid Glass** · 地图的颜色在哪里透出来, 侧栏上的字如何看清 | [Apple 地图侧栏截帧](originals/apple-maps.jpg) · [官方演示 05:22](https://developer.apple.com/videos/play/wwdc2025/310/?time=322) · [Mac 设计素材](https://developer.apple.com/design/resources/#macos) | [Quarry 应用图](apple-liquid-glass.png) · [材质和原尺寸组件](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=52-24248) |
+| [<img src="originals/apple-maps.jpg" width="165" alt="地图上的玻璃侧栏">](originals/apple-maps.jpg)<br>**Apple Liquid Glass** · 地图的颜色在哪里透出来, 侧栏上的字如何看清 | [Apple 地图侧栏截帧](originals/apple-maps.jpg) · [官方演示 05:22](https://developer.apple.com/videos/play/wwdc2025/310/?time=322) · [Mac 设计素材](https://developer.apple.com/design/resources/#macos) | [用户选中的全窗稿](apple-process/uniform.png) · [原稿与两种改法](../cases/apple-glass.md) · [材质和原尺寸组件](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=52-24248) |
 | [<img src="still-components.jpg" width="165" alt="步骤按钮、记录行和输入框">](still-components.jpg)<br>**灵感 Still** · 看带数字圆片的步骤按钮、输入框、选中行和两行记录 | [用户选中的组件拼图](still-components.jpg) · [原组件](https://www.figma.com/design/AnEre9JbzJYfQdhaOGtJqW/?node-id=16-19446) · [窗口表面](https://www.figma.com/design/AnEre9JbzJYfQdhaOGtJqW/?node-id=15-18322) | [同一组组件做出的五个方案](../cases/index.md) |
 
 在 Still 这组里, 选中行只借窄行的淡紫, 步骤按钮只借白色圆片与细边, 铺满窗口的紫色和无描边的浅紫长按钮曾被退回

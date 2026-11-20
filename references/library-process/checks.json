@@ -1,0 +1,71 @@
+{
+  "shadcn": {
+    "designNode": "47:20650",
+    "boardNode": "47:20892",
+    "designSizePx": [
+      1440,
+      940
+    ],
+    "designPngSha256": "2eebf7e0ba9481761f2fd06384faeb588c00077a04ed6a2496e80576363f2a96",
+    "boardPngSha256": "6650fe2b9277284929dd082f10bd8c2ca6c8472f9e43c37f98b8369c3e9cfcbc",
+    "componentChecks": 30,
+    "iconPositionChecks": 8,
+    "reviewPatch": {
+      "label": "Review patch",
+      "iconAndLabelCenterOffsetPx": [
+        0,
+        0
+      ],
+      "iconToLabelGapPx": 6
+    },
+    "linkedComponentExamples": [
+      {
+        "name": "Button / Review patch",
+        "instance": "50:23223",
+        "mainComponent": "50:23222"
+      },
+      {
+        "name": "Badge / Duplicate",
+        "instance": "50:23237",
+        "mainComponent": "50:23236"
+      }
+    ]
+  },
+  "untitled": {
+    "designNode": "50:21410",
+    "boardNode": "50:22310",
+    "designSizePx": [
+      1440,
+      940
+    ],
+    "designPngSha256": "5b177f3684f24909279b4e8ac7cce6d1b1e440ec14fd6fbd18747d9372141521",
+    "boardPngSha256": "cdb8a4674a6985403e9901a69f3f84d79555b4b9f0f183f664a8ea1421553bd6",
+    "componentChecks": 46,
+    "iconPositionChecks": 8,
+    "reviewPatch": {
+      "label": "Review patch",
+      "iconAndLabelCenterOffsetPx": [
+        0,
+        0
+      ],
+      "iconToLabelGapPx": 4
+    },
+    "linkedComponentExamples": [
+      {
+        "name": "Primary button · Review patch",
+        "instance": "50:22821",
+        "mainComponent": "50:22820"
+      },
+      {
+        "name": "Badge · Checks passed",
+        "instance": "50:22830",
+        "mainComponent": "50:22829"
+      },
+      {
+        "name": "Search input · Find a finding",
+        "instance": "50:22840",
+        "mainComponent": "50:22839"
+      }
+    ]
+  }
+}

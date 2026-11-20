@@ -48,6 +48,66 @@ def finite(value):
     return type(value) in (float, int) and math.isfinite(value)
 
 
+def check_png(path, size=None, sha256=None):
+    with path.open("rb") as stream:
+        header = stream.read(24)
+        require(len(header) == 24 and header.startswith(PNG_HEADER), f"invalid PNG: {path}")
+        if size is not None:
+            require(struct.unpack(">II", header[16:24]) == tuple(size), f"size mismatch: {path}")
+        if sha256 is not None:
+            checksum = hashlib.sha256(header)
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                checksum.update(chunk)
+            require(checksum.hexdigest() == sha256, f"SHA-256 mismatch: {path}")
+
+
+def verify_studies(root):
+    refs = root / "references"
+    apple = refs / "apple-process"
+    captures = json.loads((apple / "materials.json").read_text())["boards"]
+    boards = {item["id"]: item for item in captures}
+    exports = {"51:23751": refs / "apple-liquid-glass.png", "74:37804": apple / "full.png",
+               "75:38790": apple / "uniform.png"}
+    require(len(captures) == len(boards) and boards.keys() == exports.keys(), "Apple board IDs differ")
+    for node, path in exports.items():
+        board = boards[node]
+        require(digest(board["textLayoutAndStyleSha256"]) and digest(board["exportSha256"]),
+                f"invalid capture digest: {node}")
+        check_png(path, board["boardSize"], board["exportSha256"])
+
+    base, uniform = boards["51:23751"], boards["75:38790"]
+    require(uniform["basedOn"] == base["id"] and base["textLayers"] == uniform["textLayers"]
+            and base["textLayoutAndStyleSha256"] == uniform["textLayoutAndStyleSha256"],
+            "uniform board differs from the recorded base text layout or style")
+
+    def surface(board, name):
+        matches = [layer for layer in board["surfaces"] if layer["name"] == name]
+        require(len(matches) == 1, f"expected one {name} layer in {board['name']}")
+        return matches[0]
+
+    sidebar = surface(base, "Sidebar material surface")
+    whole = surface(uniform, "Continuous Liquid Glass · Original sidebar material")
+    require(sidebar["fills"] and any(e["type"] == "GLASS" for e in sidebar["effects"])
+            and sidebar["fills"] == whole["fills"] and sidebar["effects"] == whole["effects"],
+            "uniform board differs from the recorded sidebar material")
+    require(whole["size"] == uniform["window"]["size"] and whole["size"][0] > sidebar["size"][0]
+            and whole["size"][1] == sidebar["size"][1], "sidebar material does not extend across window")
+    check_png(apple / "board.png", (1440, 8112))
+
+    library = refs / "library-process"
+    checks = json.loads((library / "checks.json").read_text())
+    for key, design in (("shadcn", "shadcn-ui.png"), ("untitled", "untitled-ui.png")):
+        record = checks[key]
+        for field in ("designPngSha256", "boardPngSha256"):
+            require(digest(record[field]), f"invalid {key} {field}")
+        check_png(refs / design, record["designSizePx"], record["designPngSha256"])
+        check_png(library / key / "board.png", sha256=record["boardPngSha256"])
+
+    for name, size in {"foundations": (1440, 4126), "components": (1200, 1136),
+                       "desktop": (1440, 7263), "mobile": (390, 5771)}.items():
+        check_png(root / "foundations" / "original" / f"{name}.png", size)
+
+
 def verify_case(folder, index, images, nodes):
     data = json.loads((folder / "case.json").read_text())
     require(data["key"] == folder.name, "key differs from directory")
@@ -127,9 +187,11 @@ def main(root):
             totals[field] += record[field]
         minima.append(low)
     require(totals == EXPECTED, f"record totals differ: {totals}")
+    verify_studies(root)
     print(f"verified {len(CASES)} PNGs and case records, {len(nodes)} Figma node links")
     print(", ".join(f"{key}={value}" for key, value in totals.items()))
     print(f"minimum recorded text contrast={min(minima):.3f}:1")
+    print("checked archived Apple, library and Linear exports and captured layer records (offline)")
 
 
 if __name__ == "__main__":
@@ -138,5 +200,5 @@ if __name__ == "__main__":
                         help="repository root (defaults to the directory above tools)")
     try:
         main(parser.parse_args().root)
-    except (ValueError, OSError) as exc:
+    except (ValueError, KeyError, TypeError, OSError, struct.error) as exc:
         sys.exit(f"verification failed: {exc}")

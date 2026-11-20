@@ -1,0 +1,818 @@
+{
+  "file": "scYOkdhE2byoPHW4Gk1aDL",
+  "captured": "2026-11-20",
+  "units": "Figma design px, xy relative to the named parent. Fills and optical effects only. Hidden paints excluded.",
+  "boards": [
+    {
+      "id": "51:23751",
+      "name": "Apple Liquid Glass · Quarry 发布审查",
+      "basedOn": null,
+      "boardSize": [
+        1440,
+        940
+      ],
+      "textLayers": 75,
+      "glassLayers": 7,
+      "foregroundGlassControls": 6,
+      "window": {
+        "id": "52:24704",
+        "name": "Quarry · Release audit window",
+        "parent": "Apple Liquid Glass · Quarry 发布审查",
+        "xy": [
+          32,
+          48
+        ],
+        "size": [
+          1376,
+          844
+        ],
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": "#1F2022",
+            "opacity": 1
+          }
+        ],
+        "effects": []
+      },
+      "surfaces": [
+        {
+          "id": "52:24705",
+          "name": "Sidebar · Navigation and findings",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            228,
+            844
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "52:24706",
+          "name": "Aligned Tahoe Day beneath sidebar",
+          "parent": "Sidebar · Navigation and findings",
+          "xy": [
+            -32,
+            -48
+          ],
+          "size": [
+            1440,
+            940
+          ],
+          "fills": [
+            {
+              "type": "IMAGE",
+              "mode": "FILL",
+              "opacity": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "LAYER_BLUR",
+              "radius": 32
+            }
+          ]
+        },
+        {
+          "id": "52:24707",
+          "name": "Sidebar material surface",
+          "parent": "Sidebar · Navigation and findings",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            228,
+            844
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#0C0C0C",
+              "opacity": 0.851
+            }
+          ],
+          "effects": [
+            {
+              "type": "GLASS",
+              "radius": 36,
+              "refraction": 0.3,
+              "depth": 12,
+              "lightAngle": -60,
+              "lightIntensity": 0.1,
+              "dispersion": 0
+            }
+          ]
+        },
+        {
+          "id": "52:24770",
+          "name": "Finding document · RL-238",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            228,
+            52
+          ],
+          "size": [
+            786,
+            792
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#1F2022",
+              "opacity": 1
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "52:24789",
+          "name": "Native event table",
+          "parent": "Event evidence · TEST-8072",
+          "xy": [
+            0,
+            63
+          ],
+          "size": [
+            714,
+            142
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#222328",
+              "opacity": 1
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "52:24828",
+          "name": "Inspector · Codex run",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            1014,
+            52
+          ],
+          "size": [
+            362,
+            792
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#27282C",
+              "opacity": 1
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "52:24891",
+          "name": "Follow-up · Fixed split accessory",
+          "parent": "Inspector · Codex run",
+          "xy": [
+            1,
+            690
+          ],
+          "size": [
+            361,
+            102
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#27282C",
+              "opacity": 1
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "52:24902",
+          "name": "Window toolbar",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            228,
+            0
+          ],
+          "size": [
+            1148,
+            52
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "52:24903",
+          "name": "Continuous scroll edge behind tools",
+          "parent": "Window toolbar",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            1148,
+            52
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#25262A",
+              "opacity": 1
+            }
+          ],
+          "effects": []
+        }
+      ],
+      "controlExample": {
+        "id": "52:24715",
+        "name": "Toolbar control surface",
+        "parent": "Toolbar · Toggle sidebar",
+        "xy": [
+          0,
+          0
+        ],
+        "size": [
+          36,
+          36
+        ],
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": "#999999",
+            "opacity": 0.1686
+          }
+        ],
+        "effects": [
+          {
+            "type": "GLASS",
+            "radius": 4,
+            "refraction": 0.46,
+            "depth": 8,
+            "lightAngle": -60,
+            "lightIntensity": 0.22,
+            "dispersion": 0
+          }
+        ]
+      },
+      "textLayoutAndStyleSha256": "393f4d370949ab9189653b857bd4e2cda0abd64fbda7989614c9ab3250efe21f",
+      "exportSha256": "81e6a66b535a65a9a08c53ab700d035ada6fb31f452718511f2928939e4d563d"
+    },
+    {
+      "id": "74:37804",
+      "name": "Apple Liquid Glass · 全窗透明对照",
+      "basedOn": "51:23751",
+      "boardSize": [
+        1440,
+        940
+      ],
+      "textLayers": 75,
+      "glassLayers": 10,
+      "foregroundGlassControls": 6,
+      "window": {
+        "id": "75:38545",
+        "name": "Quarry · Release audit window",
+        "parent": "Apple Liquid Glass · 全窗透明对照",
+        "xy": [
+          32,
+          48
+        ],
+        "size": [
+          1376,
+          844
+        ],
+        "fills": [],
+        "effects": []
+      },
+      "surfaces": [
+        {
+          "id": "75:38774",
+          "name": "Original backing beneath sidebar",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            228,
+            844
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#1F2022",
+              "opacity": 1
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "75:38546",
+          "name": "Sidebar · Navigation and findings",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            228,
+            844
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38547",
+          "name": "Aligned Tahoe Day beneath sidebar",
+          "parent": "Sidebar · Navigation and findings",
+          "xy": [
+            -32,
+            -48
+          ],
+          "size": [
+            1440,
+            940
+          ],
+          "fills": [
+            {
+              "type": "IMAGE",
+              "mode": "FILL",
+              "opacity": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "LAYER_BLUR",
+              "radius": 32
+            }
+          ]
+        },
+        {
+          "id": "75:38548",
+          "name": "Sidebar material surface",
+          "parent": "Sidebar · Navigation and findings",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            228,
+            844
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#0C0C0C",
+              "opacity": 0.851
+            }
+          ],
+          "effects": [
+            {
+              "type": "GLASS",
+              "radius": 36,
+              "refraction": 0.3,
+              "depth": 12,
+              "lightAngle": -60,
+              "lightIntensity": 0.1,
+              "dispersion": 0
+            }
+          ]
+        },
+        {
+          "id": "75:38609",
+          "name": "Finding document · RL-238",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            228,
+            52
+          ],
+          "size": [
+            786,
+            792
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38775",
+          "name": "Liquid Glass · Reading surface",
+          "parent": "Finding document · RL-238",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            786,
+            792
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#10171F",
+              "opacity": 0.68
+            }
+          ],
+          "effects": [
+            {
+              "type": "GLASS",
+              "radius": 32,
+              "refraction": 0.24,
+              "depth": 8,
+              "lightAngle": -60,
+              "lightIntensity": 0.07,
+              "dispersion": 0
+            }
+          ]
+        },
+        {
+          "id": "75:38628",
+          "name": "Native event table",
+          "parent": "Event evidence · TEST-8072",
+          "xy": [
+            0,
+            63
+          ],
+          "size": [
+            714,
+            142
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#DAE6ED",
+              "opacity": 0.038
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "75:38667",
+          "name": "Inspector · Codex run",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            1014,
+            52
+          ],
+          "size": [
+            362,
+            792
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38776",
+          "name": "Liquid Glass · Inspector surface",
+          "parent": "Inspector · Codex run",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            362,
+            792
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#101920",
+              "opacity": 0.61
+            }
+          ],
+          "effects": [
+            {
+              "type": "GLASS",
+              "radius": 25,
+              "refraction": 0.31,
+              "depth": 10,
+              "lightAngle": -60,
+              "lightIntensity": 0.09,
+              "dispersion": 0
+            }
+          ]
+        },
+        {
+          "id": "75:38727",
+          "name": "Follow-up · Fixed split accessory",
+          "parent": "Inspector · Codex run",
+          "xy": [
+            1,
+            690
+          ],
+          "size": [
+            361,
+            102
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#131923",
+              "opacity": 0.15
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "75:38738",
+          "name": "Window toolbar",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            228,
+            0
+          ],
+          "size": [
+            1148,
+            52
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38739",
+          "name": "Liquid Glass · Toolbar surface",
+          "parent": "Window toolbar",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            1148,
+            52
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#141B25",
+              "opacity": 0.57
+            }
+          ],
+          "effects": [
+            {
+              "type": "GLASS",
+              "radius": 24,
+              "refraction": 0.3,
+              "depth": 9,
+              "lightAngle": -60,
+              "lightIntensity": 0.1,
+              "dispersion": 0
+            }
+          ]
+        }
+      ],
+      "controlExample": {
+        "id": "75:38556",
+        "name": "Toolbar control surface",
+        "parent": "Toolbar · Toggle sidebar",
+        "xy": [
+          0,
+          0
+        ],
+        "size": [
+          36,
+          36
+        ],
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": "#999999",
+            "opacity": 0.1686
+          }
+        ],
+        "effects": [
+          {
+            "type": "GLASS",
+            "radius": 4,
+            "refraction": 0.46,
+            "depth": 8,
+            "lightAngle": -60,
+            "lightIntensity": 0.22,
+            "dispersion": 0
+          }
+        ]
+      },
+      "textLayoutAndStyleSha256": "7b074b6f33f07242e9f9422c85a9e5a85b13d230473a0f025dacca0b9539d018",
+      "exportSha256": "f66987544516abadc7fbef92cfd6497a0227b2d13f5ee9ca942debd4c83e4a61"
+    },
+    {
+      "id": "75:38790",
+      "name": "Apple Liquid Glass · 全窗统一左栏材质",
+      "basedOn": "51:23751",
+      "boardSize": [
+        1440,
+        940
+      ],
+      "textLayers": 75,
+      "glassLayers": 7,
+      "foregroundGlassControls": 6,
+      "window": {
+        "id": "75:38794",
+        "name": "Quarry · Release audit window",
+        "parent": "Apple Liquid Glass · 全窗统一左栏材质",
+        "xy": [
+          32,
+          48
+        ],
+        "size": [
+          1376,
+          844
+        ],
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": "#1F2022",
+            "opacity": 1
+          }
+        ],
+        "effects": []
+      },
+      "surfaces": [
+        {
+          "id": "75:38796",
+          "name": "Continuous wallpaper · From original sidebar",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            -32,
+            -48
+          ],
+          "size": [
+            1440,
+            940
+          ],
+          "fills": [
+            {
+              "type": "IMAGE",
+              "mode": "FILL",
+              "opacity": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "LAYER_BLUR",
+              "radius": 32
+            }
+          ]
+        },
+        {
+          "id": "75:38797",
+          "name": "Continuous Liquid Glass · Original sidebar material",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            1376,
+            844
+          ],
+          "fills": [
+            {
+              "type": "SOLID",
+              "color": "#0C0C0C",
+              "opacity": 0.851
+            }
+          ],
+          "effects": [
+            {
+              "type": "GLASS",
+              "radius": 36,
+              "refraction": 0.3,
+              "depth": 12,
+              "lightAngle": -60,
+              "lightIntensity": 0.1,
+              "dispersion": 0
+            }
+          ]
+        },
+        {
+          "id": "75:38795",
+          "name": "Sidebar · Navigation and findings",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            0,
+            0
+          ],
+          "size": [
+            228,
+            844
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38858",
+          "name": "Finding document · RL-238",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            228,
+            52
+          ],
+          "size": [
+            786,
+            792
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38877",
+          "name": "Native event table",
+          "parent": "Event evidence · TEST-8072",
+          "xy": [
+            0,
+            63
+          ],
+          "size": [
+            714,
+            142
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38916",
+          "name": "Inspector · Codex run",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            1014,
+            52
+          ],
+          "size": [
+            362,
+            792
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38976",
+          "name": "Follow-up · Fixed split accessory",
+          "parent": "Inspector · Codex run",
+          "xy": [
+            1,
+            690
+          ],
+          "size": [
+            361,
+            102
+          ],
+          "fills": [],
+          "effects": []
+        },
+        {
+          "id": "75:38987",
+          "name": "Window toolbar",
+          "parent": "Quarry · Release audit window",
+          "xy": [
+            228,
+            0
+          ],
+          "size": [
+            1148,
+            52
+          ],
+          "fills": [],
+          "effects": []
+        }
+      ],
+      "controlExample": {
+        "id": "75:38805",
+        "name": "Toolbar control surface",
+        "parent": "Toolbar · Toggle sidebar",
+        "xy": [
+          0,
+          0
+        ],
+        "size": [
+          36,
+          36
+        ],
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": "#999999",
+            "opacity": 0.1686
+          }
+        ],
+        "effects": [
+          {
+            "type": "GLASS",
+            "radius": 4,
+            "refraction": 0.46,
+            "depth": 8,
+            "lightAngle": -60,
+            "lightIntensity": 0.22,
+            "dispersion": 0
+          }
+        ]
+      },
+      "textLayoutAndStyleSha256": "393f4d370949ab9189653b857bd4e2cda0abd64fbda7989614c9ab3250efe21f",
+      "exportSha256": "d9735c8c624657c14f6f96915ed149a45f018dbbe69a1e217a8c4ab330376ec6"
+    }
+  ],
+  "textDigestMethod": "SHA-256 of sorted, newline-separated UTF-8 JSON text-layer records, compact keys sorted: characters, board-relative boxes, alignment, and font and fill runs. Source node IDs are excluded."
+}

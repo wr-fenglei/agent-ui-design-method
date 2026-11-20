@@ -1,27 +1,22 @@
 # 和 Agent 一起画界面
 
-假设一个订单被记了两次, 你打开一张图, 能找到这两条记录, 看懂 Agent 改了什么, 也知道还有哪个按钮等你按, 这就是我们想画的界面
+先看这张 Mac 界面, 左边选问题, 中间查证据, 右边看 Agent 做了什么, 最后由人审阅补丁
 
-**第一次用, 先看两张图**
+[![Apple 风格的 Quarry 界面, 三栏透出同一片湖面的颜色](references/apple-process/uniform.png)](cases/apple-glass.md)
 
-| 先看底稿 | 再看它怎样变 |
+**这是用户目前选中的视觉样稿, Apple Liquid Glass · 全窗统一左栏材质**, 把左栏的玻璃铺满窗口之后, 还能看出哪些是正文、哪些是能点的工具, 可以把三版的同一处放大对照 [看它怎样做出来](cases/apple-glass.md) · [打开 Figma 成稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=75-38790)
+
+## 从哪里开始
+
+| 想解决的问题 | 打开这里 |
 |---|---|
-| [![Linear 风格的 Quarry 底稿, 左边选问题, 中间看证据, 右边审改动](evidence/linear.png)](foundations/linear.md) | [![双记录核证, 同一订单的两条记录并排显示](references/quarry-compare.png)](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68697) |
-| 左边选一个问题, 点开就能找到证据和下一步 [看底稿](foundations/linear.md) | 右图把两条记录摆在一起, 借了 Still 的选中行和步骤按钮 [看五种画法](cases/index.md) |
+| 一张新界面上, 先放什么、后放什么 | 元设计就是可从中出发的完整底稿, 目前用 Linear, 打开原稿的基础样式、组件和整屏, 可以跟着同一行记录看它怎样组合 [Linear 底稿](foundations/linear.md) |
+| 怎样让一扇窗透出背景, 又能读清文字 | 从 Apple 实物、整张研究板、原尺寸控件读到三版材质的变化 [Apple 全窗案例](cases/apple-glass.md) · [可搜索的测量与设计笔记](references/apple-process/study-notes.md) |
+| 一个按钮怎么定大小, 一行被选中时改哪里 | 看 shadcn/ui 和 Untitled UI 的官网实图、实测尺寸、在 Quarry 里采用的细节和最后的检查 [两份组件库研究](references/component-studies.md) |
+| 还缺一张能用的参考图 | 带着要画的部位和状态去找, 从图库或 X 追到产品原件 [找图方法](references/README.md) |
 
-**元设计**是画新界面时用的底稿, 目前只有一套, 就是上面左边的 Quarry
+## 给 Agent 一个任务
 
-**参考图**可以只借一处, 比如学它怎样画一个按钮, 或怎样标出被选中的那一行
+> 请设计一个 Mac 界面, 用户要做的是 [填入任务], 先打开 Linear 底稿和相关研究, 把实际参考、原尺寸组件、这个任务要采用的做法放在成稿旁, 交付可编辑稿、研究板和原尺寸预览
 
-| 你现在想做什么 | 打开哪里 |
-|---|---|
-| 从底稿开始, 分清要保留什么、哪里可以变 | [看 Linear 原图和 Quarry 底稿](foundations/linear.md) |
-| 找一个按钮、一行列表或一块玻璃的样子 | [挑参考图, 学怎么找原图](references/README.md) |
-| 把喜欢的细节放进新图, 发现不合适时改小样 | [做小样、解决冲突、检查成稿](docs/method.md) |
-| 让 Agent 开始画 | [复制设计简报](templates/study-brief.md) |
-
-**可以直接给 Agent 一句话**
-
-> 请按这个仓库的简报设计一个 Mac 界面, 我想用它来 [填入任务], 用 Linear 底稿安排内容, 从参考库选适合这个任务的细节, 先做一个原尺寸的小样, 再交付整张设计稿和检查后的预览图
-
-想看以前做过什么, 可以打开[五份 Still 方案和十个来源案例](cases/index.md), 关于 Linear 对成稿的影响, 另有[测量记录](docs/linear-influence.md)
+[复制完整简报](templates/study-brief.md) · [看制作步骤和参考冲突时的处理](docs/method.md) · [看其他已归档案例](cases/index.md)
