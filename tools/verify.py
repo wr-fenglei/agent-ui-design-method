@@ -107,6 +107,14 @@ def verify_studies(root):
                        "desktop": (1440, 7263), "mobile": (390, 5771)}.items():
         check_png(root / "foundations" / "original" / f"{name}.png", size)
 
+    first_exports = {
+        root / "foundations/original/quarry-first.png": "fc1362c134382d2552cbd91f14744db22f345466cbdcdd10082b8a4cfaf480d3",
+        library / "shadcn/first-screen.png": "706890c3aa2b1615a3da58b9fdb55729fbf88614b2a24772c4672c39eebf7873",
+        library / "untitled/first-screen.png": "a7b7289eea4f8c249a1a62ff3b1666ff52512a4a347573d03b61506413475dcd",
+    }
+    for path, checksum in first_exports.items():
+        check_png(path, (1440, 940), checksum)
+
 
 def verify_case(folder, index, images, nodes):
     data = json.loads((folder / "case.json").read_text())

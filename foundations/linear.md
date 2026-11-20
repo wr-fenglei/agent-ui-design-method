@@ -2,9 +2,9 @@
 
 先在左边点一个问题, 看旁边的记录和 Agent 的解释, 再决定下一步, 这套顺序既可以审截图, 也可以审订单
 
-| 原稿用它审截图 | Quarry 用它审订单 |
+| 原稿用它审截图 | Quarry 首稿用它审订单 |
 |---|---|
-| [![Linear 风格原稿, 选中 UI-142 后查看截图审查](linear-source.png)](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-29) | [![Quarry 底稿, 在同一窗口选问题、看证据、审补丁](../evidence/linear.png)](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=11-7202) |
+| [![Linear 风格原稿, 选中 UI-142 后查看截图审查](linear-source.png)](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-29) | [![Quarry 首次发布的 1440 × 940 整屏, 在同一窗口选问题、看证据、审补丁](original/quarry-first.png)](original/quarry-first.png) |
 
 左边是用户给的 Linear 风格 Figma, 右边是这个项目沿用它做的 Quarry, 目前仓库把这一套作为元设计, 下文先读左图的出处, 再看新任务怎样沿用它
 
@@ -40,16 +40,28 @@
 
 </details>
 
-## 当时是怎样做出 Mac Agent · Linear 的
+## Quarry 第一稿是怎样画出来的
 
-**先从原稿挑一个完整的窗口**, 当时的制作记录显示, 设计者先读 Foundations、Components、Screens, 导出并查看颜色板和桌面首屏, 选定首屏里 1320 × 720 的截图审查窗口, 作为发布审查的构图依据, 选中的是左侧导航、问题队列、详情和右下角 Agent 浮窗之间的关系 [颜色板](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=5-247) · [桌面首屏](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-19) · [原窗口](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-29)
+2026-11-19, 用户请我们分别参考「灵感」和「Linear」做两份独立设计稿, 下表的时间均为上海时间
 
-**把截图审查换成一项能核对的发布调查**, 在新画板上用绘图函数逐层搭出 Quarry, 队列里有 8 项发现, 按待审、进行中、通过三组排列, 选中「重复结算事件」RL-238, 详情摆出同一订单 TEST-8072 的两次记录, 09:41:12.083 是首次确认, 09:41:12.516 是网络重试, 两行都显示同一个事件名, 读者可以直接查出重复的原因 [队列](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16801) · [证据区](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16864)
+| 时间 | 当时做了什么 |
+|---|---|
+| 23:29–23:31, 读原稿 | 读取 Foundations、Components 及桌面和手机的 Screens, 单独导出颜色板和桌面首屏看实图, 项目首页有介绍文字和产品窗, 设计者选了其中 1320 × 720 px 的产品窗, 核对其 232 px 侧栏、1070 px 主区和 400 × 452 px 浮窗 [颜色板](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=5-247) · [桌面首屏](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-19) |
+| 23:31, 定首屏 | 设计者动笔前写下「保留导航、队列、详情和右下浮动 Agent 面板」, 还明确要放可核对的事件证据和补丁, 当时已记录原稿的深色表面、靛蓝强调色、文字层级、1 px 平铺边线和浮层阴影 [原窗口](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-29) |
+| 23:33–23:35, 画出并查看 | 第一版绘图源把选中问题、两条订单事件、处理结果和审阅动作一次放进窗口, 23:34:54 首次写入 Figma, 23:35:05 打开整屏导出, 页首右图取自当时的 PNG [首次发布整屏](original/quarry-first.png) |
 
-**把证据和待审补丁同时放进画面**, 1440 × 940 画板内, 三栏分别宽 222 / 373 / 753 px, 详情上方给两条记录留出完整列宽, 下方左边写预期和活动, 右边放 405 × 409 px 的 Agent 窗口, 窗口里从用户请求依次读到订单防重建议、本地回放两次重试只发一次事件、补丁文件、审阅按钮和追问框, 读者审补丁时仍能看到上方证据 [浮窗](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16909) · [Quarry 绘图源](../evidence/linear.js)
+**从原窗口逐项改写功能**, 两张图都可以从选中行一路读到 Agent 的产物
 
-**出图后再修细节**, 首稿的搜索、筛选、发送图标按固定坐标摆放, 后续改为按矢量实际宽高对齐按钮中心, 补丁行把原先同色的 `+8 −2` 拆成绿色新增和红色删除, 窗口轮廓移到绘制顺序的末尾, 放大修订后的导出图复核, 三个图标与各自按钮中心的偏差均在 0.5 px 内 [补丁行](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16923) · [发送按钮](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16937) · [最终导出](../evidence/linear.png)
+| 原稿审 UI-142 的截图 | Quarry 首稿审 RL-238 的订单 |
+|---|---|
+| 在「修复中」选中「首屏标题行高过紧」 | 在 8 项发布检查里选中「重复结算事件」, 队列仍按待审、进行中、通过分组 |
+| 详情交代检查项, 给出 1440 和 390 两个视口及活动记录 | 详情给出同一订单 TEST-8072 的两条记录, 时间是 09:41:12.083 和 09:41:12.516, 首次确认和网络重试各发了一次同名事件 |
+| Codex 浮窗写出请求、改动的两处排版、更新的 index.html, 底部可以追问 | 浮窗写出检查重试的请求、按订单号防重的建议、两次重试只发一次事件的回归结果, 用户可点 Review patch 审阅 checkout-event.patch, 也可以追问 |
 
-画新图时先保留四个关系, 读者能指出当前对象、支持结论的记录、Agent 的处理和等人确认的动作, 款式和尺寸可以另定, 例如原稿详情标题是 20 px, Quarry 用 26 px, 审阅按钮为 135 × 33 px、圆角 6 px [Quarry 读数](../evidence/frame-measurements.json) · [参考库](../references/README.md) · [制作流程](../docs/method.md)
+**把空间留给需要对照的内容**, Quarry 在 1440 × 940 px 画板上给三栏分配 222 / 373 / 753 px, 详情上半部给两条事件共用时间、来源、事件名和结果四列, 两行按列对齐, 右下浮窗从证据底线往下 17 px 开始, 窗口左侧留出预期行为和活动记录, 在首稿中就能一边看两条事件, 一边审补丁 [首稿整屏](original/quarry-first.png) · [最终绘图源](../evidence/linear.js)
+
+首发之后才修过快捷键、搜索、筛选、发送图标的居中和补丁增删颜色, 图层调整可与首发整屏对照 [最终导出](../evidence/linear.png) · [可编辑稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=11-7202)
+
+**下一张可以照做**, 动笔前挑一个完整的工作窗口, 写出队列选中了哪件事、哪两条记录能解释它、Agent 交出什么、谁点确认, 用真实长度的文案先摆这四处, 再给标题、按钮和状态配样式, 这是从两张实图提取的做法, 现有记录没有测量各因素对审美判断的单独贡献 [Quarry 读数](../evidence/frame-measurements.json) · [制作流程](../docs/method.md)
 
 如需收录第二套元设计, 先说明它适合哪类不同的任务, 用它完成一份新稿, 再由用户选择是否作为下次的起点
