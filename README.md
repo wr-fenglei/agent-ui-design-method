@@ -1,22 +1,18 @@
 # 和 Agent 一起画界面
 
-先看这张 Mac 界面, 左边选问题, 中间查证据, 右边看 Agent 做了什么, 最后由人审阅补丁
+看同一个问题怎样排成三张 Mac 界面, 三张都在查重复的订单事件, 读者需要同时看什么, 决定了页面怎样分区
 
-[![Apple 风格的 Quarry 界面, 三栏透出同一片湖面的颜色](references/apple-process/uniform.png)](cases/apple-glass.md)
+| Linear · 从队列选问题 | shadcn/ui · 查一件事的经过 | Untitled UI · 在多项问题间切换 |
+|---|---|---|
+| [![左侧导航、中间队列、右侧详情与浮动回复](evidence/linear.png)](foundations/linear.md) | [![从上到下依次是请求、运行记录、事件表和补丁](references/shadcn-ui.png)](references/component-studies.md) | [![八项问题和所选问题的调查经过并列](references/untitled-ui.png)](references/component-studies.md) |
+| 选中行和详情标题指向同一项, 浮动回复放在事件表下方 | 两次发送放在相邻行, 时间戳排在同一列, 顺着表往下就找到补丁 | 中间保留八个问题, 右侧跟随选中项, 检查结果和审阅按钮各有位置 |
 
-**这是用户目前选中的视觉样稿, Apple Liquid Glass · 全窗统一左栏材质**, 把左栏的玻璃铺满窗口之后, 还能看出哪些是正文、哪些是能点的工具, 可以把三版的同一处放大对照 [看它怎样做出来](cases/apple-glass.md) · [打开 Figma 成稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=75-38790)
+## 画自己的界面
 
-## 从哪里开始
+1. **先摆内容**, 写下用户要做的决定和必须比较的两样东西, 用同一批真实内容尝试不同的位置, 缩小整页看哪一组先被注意到 [制作步骤](docs/method.md)
+2. **再定细节**, 从原件里选一个能回答当前问题的部位, 看普通和选中两态, 把自己的最长标题、图标和下一步操作放进去, 在原尺寸调整字级、对齐和组间距 [查 Linear 原稿](foundations/linear.md) · [查两套组件库](references/component-studies.md) · [怎么找实物](references/README.md)
+3. **把判断留在稿旁**, 放上参考原图、试过的布局和修改前后同一处, 请新读者读一次画面, 再与参考并排检查视觉主次 [给 Agent 的简报](templates/study-brief.md)
 
-| 想解决的问题 | 打开这里 |
-|---|---|
-| 一张新界面上, 先放什么、后放什么 | 元设计就是可从中出发的完整底稿, 目前用 Linear, 打开原稿的基础样式、组件和整屏, 可以跟着同一行记录看它怎样组合 [Linear 底稿](foundations/linear.md) |
-| 怎样让一扇窗透出背景, 又能读清文字 | 从 Apple 实物、整张研究板、原尺寸控件读到三版材质的变化 [Apple 全窗案例](cases/apple-glass.md) · [可搜索的测量与设计笔记](references/apple-process/study-notes.md) |
-| 一个按钮怎么定大小, 一行被选中时改哪里 | 看 shadcn/ui 和 Untitled UI 的官网实图、实测尺寸、在 Quarry 里采用的细节和最后的检查 [两份组件库研究](references/component-studies.md) |
-| 还缺一张能用的参考图 | 带着要画的部位和状态去找, 从图库或 X 追到产品原件 [找图方法](references/README.md) |
+Linear 是仓库现有的元设计, 提供任务、证据、回复和操作之间的关系, Apple 全窗稿记录另一类问题, 三张稿保持同一内容来比较材料覆盖范围, 需要研究材质时可以打开 [Apple 全窗案例](cases/apple-glass.md) · [可搜索的研究板](references/apple-process/study-notes.md)
 
-## 给 Agent 一个任务
-
-> 请设计一个 Mac 界面, 用户要做的是 [填入任务], 先打开 Linear 底稿和相关研究, 把实际参考、原尺寸组件、这个任务要采用的做法放在成稿旁, 交付可编辑稿、研究板和原尺寸预览
-
-[复制完整简报](templates/study-brief.md) · [看制作步骤和参考冲突时的处理](docs/method.md) · [看其他已归档案例](cases/index.md)
+[看其他已归档设计](cases/index.md)

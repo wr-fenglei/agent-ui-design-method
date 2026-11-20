@@ -1,9 +1,9 @@
 # 给画界面的 Agent
 
-先读 [首页](README.md), 用一句话写出用户打开这张图要判断什么, 按用户指定的设备、内容、风格和交付格式制作
+读[首页](README.md)的三张成稿, 带着当前任务查原件, Linear 可以查对象、队列和详情怎样关联, shadcn/ui 可以查连续内容与列对齐, Untitled UI 可以查列表与检查区如何并排 [Linear 底稿](foundations/linear.md) · [组件库实录](references/component-studies.md)
 
-做布局时, 打开 Linear 原稿的 Foundations、Components、Screens, 从成屏追到其中的控件和基础样式, 做按钮、表格或输入框时, 看两套组件库在真实内容里的不同状态, 做玻璃时, 并排看 Apple 原稿、分区透明稿和用户选中的全窗稿 [Linear 原稿](foundations/linear.md) · [组件库研究](references/component-studies.md) · [Apple 全窗材质案例](cases/apple-glass.md)
+先放入真实内容, 决定视觉中心和阅读顺序, 开始新的整屏构图时, 把相同内容排出不同方案, 看哪些信息需要相邻、哪些重复项能拿掉, 在上色前选布局, 按具体用途决定是否需要特殊材质 [制作流程](docs/method.md)
 
-用[设计简报](templates/study-brief.md)组织交付, 在 Figma 成稿旁保留研究板, 放入所用实物、自己的原尺寸组件、每项关键决定和导出检查, 让下一个人点开一处控件就能找到采用它的理由
+用[简报](templates/study-brief.md)交付, 将来源实图、版式尝试、原尺寸组件、采用和舍弃的理由放在成稿旁, 从实际导出中指出一处需要调整的排版, 留下修订前后供比较
 
-交付前用真实文字走完用户的任务, 打开最终导出图并对照原件, 根据结果修稿, 说明还需要人选的地方 [制作流程与案例](docs/method.md)
+请未参与设计的人或 Agent 只看成稿复述任务、依据和下一步, 另把成稿和选定参考并排检查重心、字级、对齐和间距, 记录仍有分歧的地方交给用户判断

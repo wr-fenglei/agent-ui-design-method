@@ -40,16 +40,16 @@
 
 </details>
 
-## Quarry 怎样用这套底稿
+## 当时是怎样做出 Mac Agent · Linear 的
 
-| 用户要判断什么 | Quarry 的做法 | 下一张稿可以怎样变 |
-|---|---|---|
-| 我正在看哪一项 | 队列选中 RL-238, 详情标题和 Agent 面板指向同一次调查 | 只有一个任务时收起队列, 用标题标明对象 |
-| Agent 凭什么这么说 | 同一订单的首次确认和网络重试占两行, 时间戳可分别核对 | 看间隔时标出 433 ms, 看字段变化时将两条记录并排 |
-| 哪一步还要我处理 | 本地回放已通过, 补丁仍待人审阅, 操作与产物相邻 | 可以把改动内容放主区, 侧栏放验证结果和审阅操作 |
+**先从原稿挑一个完整的窗口**, 当时的制作记录显示, 设计者先读 Foundations、Components、Screens, 导出并查看颜色板和桌面首屏, 选定首屏里 1320 × 720 的截图审查窗口, 作为发布审查的构图依据, 选中的是左侧导航、问题队列、详情和右下角 Agent 浮窗之间的关系 [颜色板](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=5-247) · [桌面首屏](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-19) · [原窗口](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-29)
 
-原稿的应用窗口侧栏宽 232 px, 接着是 400 px 列表和 668 px 详情, Quarry 在 1440 × 940 画板上采用 222 / 373 / 753 px 三栏, 行高 47 px, 问题标题 26 px, 审阅按钮 135 × 33 px, 圆角 6 px, 这些是 Quarry 配合订单内容做出的取值 [原窗口](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME?node-id=7-29) · [Quarry 读数](../evidence/frame-measurements.json) · [Quarry 绘图源](../evidence/linear.js)
+**把截图审查换成一项能核对的发布调查**, 在新画板上用绘图函数逐层搭出 Quarry, 队列里有 8 项发现, 按待审、进行中、通过三组排列, 选中「重复结算事件」RL-238, 详情摆出同一订单 TEST-8072 的两次记录, 09:41:12.083 是首次确认, 09:41:12.516 是网络重试, 两行都显示同一个事件名, 读者可以直接查出重复的原因 [队列](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16801) · [证据区](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16864)
 
-换业务时带上所选对象、原始证据、Agent 解释和下一步这四样, 技术字段和控件可随任务更换, 同题比较时才固定订单和待审状态 [参考库](../references/README.md) · [制作流程](../docs/method.md)
+**把证据和待审补丁同时放进画面**, 1440 × 940 画板内, 三栏分别宽 222 / 373 / 753 px, 详情上方给两条记录留出完整列宽, 下方左边写预期和活动, 右边放 405 × 409 px 的 Agent 窗口, 窗口里从用户请求依次读到订单防重建议、本地回放两次重试只发一次事件、补丁文件、审阅按钮和追问框, 读者审补丁时仍能看到上方证据 [浮窗](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16909) · [Quarry 绘图源](../evidence/linear.js)
+
+**出图后再修细节**, 首稿的搜索、筛选、发送图标按固定坐标摆放, 后续改为按矢量实际宽高对齐按钮中心, 补丁行把原先同色的 `+8 −2` 拆成绿色新增和红色删除, 窗口轮廓移到绘制顺序的末尾, 放大修订后的导出图复核, 三个图标与各自按钮中心的偏差均在 0.5 px 内 [补丁行](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16923) · [发送按钮](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=34-16937) · [最终导出](../evidence/linear.png)
+
+画新图时先保留四个关系, 读者能指出当前对象、支持结论的记录、Agent 的处理和等人确认的动作, 款式和尺寸可以另定, 例如原稿详情标题是 20 px, Quarry 用 26 px, 审阅按钮为 135 × 33 px、圆角 6 px [Quarry 读数](../evidence/frame-measurements.json) · [参考库](../references/README.md) · [制作流程](../docs/method.md)
 
 如需收录第二套元设计, 先说明它适合哪类不同的任务, 用它完成一份新稿, 再由用户选择是否作为下次的起点

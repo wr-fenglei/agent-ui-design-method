@@ -7,6 +7,17 @@
 | [<img src="library-process/shadcn/board.png" width="220" alt="shadcn/ui 规范板, 从字体、尺寸到实际样件和官网实图">](library-process/shadcn/board.png) | [<img src="library-process/untitled/board.png" width="220" alt="Untitled UI 规范板, 从按钮字号到原尺寸状态和表格实图">](library-process/untitled/board.png) |
 | [看成稿](shadcn-ui.png) · [在 Figma 查看规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=47-20892) · [读测量笔记和 6 张官网截图](library-process/shadcn/measurements.md) | [看成稿](untitled-ui.png) · [在 Figma 查看规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=50-22310) · [读测量笔记和 8 张官网截图](library-process/untitled/measurements.md) |
 
+## 从原件到两张稿
+
+两张稿都新建了 1440 × 940 的空画板, 各自的绘图函数把官网量过的控件重新排成调查界面, 可以从早期图层读数、局部导出和终稿查到以下变化
+
+| 当时做了什么 | shadcn/ui | Untitled UI |
+|---|---|---|
+| 选内容、排位置 | 保留 Dashboard 的 288 px 导航和右边的白色内容区, 把首页指标换成审查请求、3 项运行活动、2 条事件和待审补丁, 用 Geist 30 / 36 px 写当前问题, 用等宽数字对齐发送时间 | 把问题列表放在 760 px 的中栏, 400 px 的右栏保留当前问题的请求、附件、检查结果和审阅按钮, 8 条问题各占一行, 页标题用 Inter 30 / 38 px, 右栏标题用 20 / 30 px |
+| 对照原件改细节 | 早期读回的标签组高 32 px, 选中标签高 26 px, 官网样例实际是 36 和 29 px, 终稿采用官网读数, 选中标签上下各留 3.5 px [终稿选中标签](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=50-22953) | 早期表格截图里, 进行中用浅黄胶囊、通过用浅绿胶囊, 终稿表内统一为白底、灰边、带色圆点和状态文字, 右侧单独的检查结果保留浅绿色, 表头从 43 px 校到官网中号的 44 px [早期稿的表格截图](library-process/untitled/table-first-draft.jpg) · [终稿表内状态](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=50-22547) |
+
+官网截图和尺寸记录用于绘制控件, 设计稿画好后, 从稿中取原尺寸样件放上规范板, 其中 2 个 shadcn/ui 控件和 3 个 Untitled UI 控件关联到主组件, 脚本对照转换前后的整稿和规范板, 两张导出图都一致才保留这批关联 [五个实例和主组件的对应记录](library-process/checks.json)
+
 ## shadcn/ui: 沿着一条记录读到补丁
 
 研究时打开 New York v4 的 Dashboard 01, 在 1440 × 1000 的浅色桌面视口测量, 再把窗口切到 740 × 820 观察窄窗导航, 在运行页面读控件的宽高、内距和字形, 对照同一版本的组件定义 [官方示例](https://ui.shadcn.com/view/new-york-v4/dashboard-01) · [组件源码清单](https://ui.shadcn.com/r/styles/new-york-v4/dashboard-01.json)
