@@ -24,6 +24,4 @@
 
 > 请按这个仓库的简报设计一个 Mac 界面, 我想用它来 [填入任务], 用 Linear 底稿安排内容, 从参考库选适合这个任务的细节, 先做一个原尺寸的小样, 再交付整张设计稿和检查后的预览图
 
-想看 Agent 换一道题能画出什么, 打开[文件改名样稿](examples/file-rename/preview.png), 看看两张同名照片的区别放在哪里
-
 想看以前做过什么, 可以打开[五份 Still 方案和十个来源案例](cases/index.md), 关于 Linear 对成稿的影响, 另有[测量记录](docs/linear-influence.md)
