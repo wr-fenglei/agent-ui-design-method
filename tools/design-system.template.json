@@ -1,0 +1,50 @@
+{
+  "task": "TODO: 谁需要根据哪项证据完成哪项任务",
+  "reference": {
+    "image": "reference.png", "source": "TODO: 原图作者、产品与画面或原图网址",
+    "comparison": {
+      "layout": ["TODO: 参考的主要分区和占比", "TODO: 本稿对应分区、占比和取舍"],
+      "type": ["TODO: 参考标题与正文的大小关系", "TODO: 本稿对应字级关系和取舍"],
+      "color": ["TODO: 参考色块面积及语义角色", "TODO: 本稿对应面积、色彩角色和取舍"],
+      "spacing": ["TODO: 参考中一处具体间距", "TODO: 本稿对应间距、位置和取舍"]
+    }
+  },
+  "artifacts": {
+    "research": "research.png", "before": "before.png", "finalState": "review",
+    "revisionBox": [0, 0, 0, 0], "revision": "TODO: 这个位置从什么改成了什么"
+  },
+  "states": {
+    "review": {"screen": "review.png", "signal": "TODO: 屏上可见的证据", "owner": "TODO", "primary": "confirm", "secondary": "inspect"},
+    "done": {"screen": "done.png", "signal": "TODO: 可辨认的结果", "owner": "TODO", "primary": "inspect", "secondary": null, "secondaryReason": "TODO: 仅保留一个操作的理由"}
+  },
+  "layout": {
+    "zones": {"workspace": [0, 0, 0, 0], "detail": [0, 0, 0, 0]},
+    "grid": "TODO: 列宽或网格依据, 哪些区域共享对齐线", "whitespace": "TODO: 哪些内容用留白分组"
+  },
+  "type": {
+    "heading": {"family": "TODO", "size": 0, "line": 0, "weight": 0, "use": "TODO"},
+    "body": {"family": "TODO", "size": 0, "line": 0, "weight": 0, "use": "TODO"}
+  },
+  "colors": {
+    "ink": {"hex": "#000000", "use": "TODO"}, "paper": {"hex": "#FFFFFF", "use": "TODO"},
+    "action": {"hex": "#000000", "use": "TODO"}
+  },
+  "contrast": [
+    {"state": "review", "style": "heading", "use": "TODO: 实际文字", "fg": "ink", "bg": "paper", "fgAt": [0, 0], "bgAt": [0, 0]},
+    {"state": "review", "style": "body", "use": "TODO: 实际文字", "fg": "paper", "bg": "action", "fgAt": [0, 0], "bgAt": [0, 0]}
+  ],
+  "spacing": {"gaps": {"item": 0, "group": 0}, "density": "TODO: 密集与宽松位置及阅读目的"},
+  "edges": {"width": 0, "radius": 0, "use": "TODO: 实线或无边界的使用位置"},
+  "icons": {"size": 0, "stroke": 0, "use": "TODO: 位置与语义或填充图标做法"},
+  "material": {"used": false, "reason": "TODO: 结合任务说明采用或省略材质的理由"},
+  "components": {
+    "confirm": {
+      "role": "TODO: 组件名称和动作", "states": ["review"],
+      "variants": {
+        "default": {"when": "TODO: 出现条件", "appearance": "TODO: 可见样式", "on": "review", "box": [0, 0, 0, 0]},
+        "focus": {"when": "TODO: 切换条件", "appearance": "TODO: 可见变化", "on": "research", "box": [0, 0, 0, 0]}
+      }
+    },
+    "inspect": {"role": "TODO: 组件名称、动作与体现状态的视觉变化", "states": ["review", "done"]}
+  }
+}

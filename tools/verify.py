@@ -8,7 +8,7 @@ import re
 import struct
 import sys
 from pathlib import Path
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 
 CASES = "anthropic impeccable promax stitch hallmark v0 mobbin refero lapa appllama".split()
@@ -59,6 +59,37 @@ def check_png(path, size=None, sha256=None):
             for chunk in iter(lambda: stream.read(1024 * 1024), b""):
                 checksum.update(chunk)
             require(checksum.hexdigest() == sha256, f"SHA-256 mismatch: {path}")
+
+
+def verify_picture_guides(root):
+    screens = {
+        "linear": "evidence/linear.png", "shadcn-ui": "references/shadcn-ui.png",
+        "untitled-ui": "references/untitled-ui.png", "apple-glass": "references/apple-process/uniform.png",
+    }
+    entry = root / "SKILL.md"
+    guides = {root / "examples" / key / "README.md": root / name for key, name in screens.items()}
+    linked_images = set()
+    case_pages = sorted((root / "examples").rglob("*.md"))
+    require(guides.keys() <= set(case_pages), "missing a core case picture guide")
+    for page in [root / "README.md", entry, root / "AGENTS.md", *case_pages]:
+        require(page.is_file(), f"missing reading page: {page}")
+        body = page.read_text()
+        local = set()
+        for target in re.findall(r"\]\(([^)\n]+)\)", body):
+            url = urlsplit(target.strip("<>"))
+            if url.scheme or not url.path:
+                continue
+            dest = (page.parent / unquote(url.path)).resolve()
+            require(dest.is_relative_to(root) and dest.exists(), f"broken local link in {page.name}: {target}")
+            local.add(dest)
+            if dest.suffix.lower() in {".png", ".jpg", ".jpeg"}:
+                linked_images.add(dest)
+        if page == entry:
+            require(guides.keys() <= local, "skill entry missing a case picture guide")
+        if page in guides:
+            require(guides[page] in local, f"missing final screen in {page.parent.name} guide")
+            require("![" in body, f"missing inline pictures in {page.parent.name} guide")
+    print(f"verified {len(guides)} local picture guides and {len(linked_images)} linked images")
 
 
 def verify_studies(root):
@@ -181,6 +212,8 @@ def verify_case(folder, index, images, nodes):
 
 
 def main(root):
+    root = root.resolve()
+    verify_picture_guides(root)
     cases = root / "cases"
     index = (cases / "index.md").read_text()
     require({p.name for p in cases.iterdir() if p.is_dir()} == set(CASES), "case directories differ")
