@@ -1,12 +1,8 @@
-# Mac Agent 设计稿与规范
+# Mac Agent 设计归档
 
-先看这三份带研究过程的案例, 可以从一处成稿追到它使用的原件、尺寸和对照试验
+历史首稿原尺寸图 [Linear](../foundations/original/quarry-first.png) · [shadcn/ui](../references/library-process/shadcn/first-screen.png) · [Untitled UI](../references/library-process/untitled/first-screen.png)
 
-| 想看什么 | 研究入口 |
-|---|---|
-| Apple 的玻璃怎样从左栏延伸到全窗 | [全窗统一左栏材质, 三版对照和制作过程](apple-glass.md) |
-| 表格、按钮、输入框的尺寸怎样定 | [shadcn/ui 与 Untitled UI 成稿下方的规范板](../references/component-studies.md) |
-| 成屏里的一个控件怎样回到主组件和基础样式 | [Linear 的 Foundations、Components 和 Screens](../foundations/linear.md) |
+[Apple 全窗材质三版](apple-glass.md) · [Linear 的实际影响及待执行对照实验](../docs/linear-influence.md)
 
 下列两组都是 1440 × 940 的 Mac 工作台, 一笔订单在 433 ms 内发出两次结算事件, Agent 提交修补建议和验证结果, 由人审阅补丁
 
@@ -19,7 +15,7 @@
 | 事件回放 | 用时间线标出 433 ms 间隔, 在下方列出对应的两条记录 | [设计稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68691) · [来源与规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68690) |
 | 事件日志 | 在各自记录下展开 JSON, 对照相同的订单字段和变化的触发条件 | [设计稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68693) · [来源与规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68692) |
 | 重试路径 | 沿着客户端到事件写入端的两行记录, 定位触发第二次写入的网络重试 | [设计稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68695) · [来源与规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68694) |
-| 双记录核证 | 将订单, 事件名, 触发条件和时间逐字段并排核对, 确认两条记录属于同一订单 | [设计稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68697) · [来源与规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68696) |
+| 双记录核证 | 将订单, 事件名, 触发条件和时间逐字段并排核对, 确认两条记录属于同一订单 | [PNG](../references/quarry-compare.png) · [设计稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68697) · [来源与规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68696) |
 | 补丁审阅 | 对照代码差异和本地回放, 查看补丁如何按订单防重, 以及两次重试的结果 | [设计稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68699) · [来源与规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=118-68698) |
 
 ## 十个来源对照
@@ -46,4 +42,4 @@
 - `reviewPatch.box` 依次是按钮相对画布的 x, y, 宽, 高, `cornerRadius` 和 `fontSize` 分别是按钮圆角和标签字号, 数值来自最终 Figma 节点
 - `qa` 是交付当时的检查记录, 包含可见文字数, 文字对比度采样数, 最低值及该值对应的文字, 几何检查, 必需文案和素材数量, `export.sha256` 可与仓库所附 PNG 对照
 
-[制作与验收方法](../docs/method.md)
+离线核验案例记录与导出图可运行 `python3 tools/verify.py`

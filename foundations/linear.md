@@ -62,6 +62,6 @@
 
 首发之后才修过快捷键、搜索、筛选、发送图标的居中和补丁增删颜色, 图层调整可与首发整屏对照 [最终导出](../evidence/linear.png) · [可编辑稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=11-7202)
 
-**下一张可以照做**, 动笔前挑一个完整的工作窗口, 写出队列选中了哪件事、哪两条记录能解释它、Agent 交出什么、谁点确认, 用真实长度的文案先摆这四处, 再给标题、按钮和状态配样式, 这是从两张实图提取的做法, 现有记录没有测量各因素对审美判断的单独贡献 [Quarry 读数](../evidence/frame-measurements.json) · [制作流程](../docs/method.md)
+现有记录没有测量各因素对审美判断的单独贡献 [Quarry 读数](../evidence/frame-measurements.json) · [制作要求](../README.md#制作要求)
 
 如需收录第二套元设计, 先说明它适合哪类不同的任务, 用它完成一份新稿, 再由用户选择是否作为下次的起点
