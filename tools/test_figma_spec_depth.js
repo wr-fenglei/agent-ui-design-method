@@ -338,6 +338,10 @@ test('linked control backgrounds compare the named native layer and its effectiv
     frame.opacity = 0.7
     const opacityErrors = await d.run()
     assert.deepEqual(opacityErrors.filter(e => e.rule === 'spec.palette').map(e => e.nodeId), [card.id])
+    const independent = d.node(d.screen, 'FRAME', role === '主操作' ? '确认发出' : '当前出库单', 180, 36)
+    const independentBottom = d.node(independent, 'RECTANGLE', '底色/' + role, 180, 36, {fills: swatch.fills})
+    position.hyperlink.value = independentBottom.id
+    assert.deepEqual(await d.run(), [])
   }
 })
 

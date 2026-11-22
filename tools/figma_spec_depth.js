@@ -260,17 +260,16 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
     }
     const instances = values(card).filter(n => n.type === 'INSTANCE')
     const destinations = targets(card).filter(n => n.type === 'INSTANCE' && inRelease(n))
-    const linkedFamilies = new Set()
     const linkedPositions = new Map()
     for (const target of destinations) {
       const id = await family(target)
       if (!id) continue
       for (const n of instances) if (await family(n) === id && sizeEqual(n, target)) {
-        linkedFamilies.add(id)
         linkedPositions.set(target.id, id)
         break
       }
     }
+    const linkedFamilies = new Set(linkedPositions.values())
     if (linkedFamilies.size !== 1 || !note(card, '说明')) {
       issue('spec.specimen', card, '「样件/' + role + '」放本地原生实例及状态/用途「说明」, 将文字 NODE 链接到对应成稿实例, 核对家族及 1:1 宽高')
       continue
@@ -355,20 +354,20 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
   required('spec.palette', '色彩', ['背景', '正文', '次文字', '主操作', '选中', '警示', '通过', '分割线'], (role, card) => {
     const sample = named(card, '色样')
     const hex = note(card, '参数').match(/#[0-9a-f]{6}\b/i)
-    const needsUseLink = controlRoles[role] || statusRoles.has(role)
-    const paint = sample && (needsUseLink ? rolePaint(sample, sample) : paintKey(sample))
+    const measuresRolePaint = controlRoles[role] || statusRoles.has(role)
+    const paint = sample && (measuresRolePaint ? rolePaint(sample, sample) : paintKey(sample))
     let inUse = true
     let usage = '正文与背景色样的填充、透明度需与成稿文字及大底面一致'
     if (role === '正文') inUse = screenText.some(n => paintKey(n) === paint)
     if (role === '背景') inUse = Array.from(releaseNodes.values()).some(n => n.type !== 'TEXT'
       && n.width >= owner.get(n.id).width * 0.2 && n.height >= owner.get(n.id).height * 0.2 && paintKey(n) === paint)
-    if (paint && controlRoles[role]) {
-      inUse = controlPaintInUse(role, usePositions(card), paint)
+    if (controlRoles[role]) {
+      inUse = paint && controlPaintInUse(role, usePositions(card), paint)
       usage = '量成稿实际控件的底色和透明度, 可直接测已登记的' + controlRoles[role] +
         '实例底色, 或用「用色位置」NODE 链接到成稿的「底色/' + role + '」'
     }
-    if (paint && statusRoles.has(role)) {
-      inUse = statusPaintInUse(card, usePositions(card), paint)
+    if (statusRoles.has(role)) {
+      inUse = paint && statusPaintInUse(card, usePositions(card), paint)
       usage = '将「用色位置」NODE 链接到本地状态样件的实际呈色层, 测描边时用「用色位置/描边」, ' +
         '业务没有该状态时在「说明」写「未使用 · 原因」'
     }
