@@ -13,3 +13,5 @@
 开始制作时读[工作步骤](SKILL.md), 进入原稿和规范板逐项查看, 需要继续找实物时用 [Linear 原始素材](sources/linear/README.md)、[shadcn/ui 官网组件截图](sources/shadcn-ui/README.md) 和 [Apple 官方材料](sources/apple-glass/README.md), 原型和排版的自动检查见[检查说明](docs/lint.md)
 
 有新业务时按功能补真实产品参考, 例如这组[多语言审阅与发布实物](sources/localization/README.md)收录 Xcode、Weblate、Mozilla Pontoon 及 GitHub 的 8 张截图, 可对照字符串编辑、建议差异和发布回归
+
+看这套方法怎样用于新题目, 可以打开 Foldmap 的[参考取舍](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=164-77285)和[审阅首稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=165-77832), 对照德语译文缺少的 `{trip}` 和 Agent 建议, 再在[交互原型](https://www.figma.com/proto/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=165-78014&page-id=160%3A77215&starting-point-node-id=165%3A78014&scaling=scale-down&content-scaling=fixed)里采纳建议、运行复查并查看发布结果
