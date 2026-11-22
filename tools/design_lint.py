@@ -23,7 +23,9 @@ MANUAL_REVIEW = [
     "查看 1× 导出, 核对主体、阅读顺序、分组与操作位置",
     "核对实际文字、媒体边界和控件变体, 在可操作原型中完成任务",
 ]
-PLACEHOLDER = re.compile(r"\b(todo|tbd|placeholder|lorem ipsum|fixme)\b|待填|待补|待完善", re.I)
+PLACEHOLDER = re.compile(
+    r"^\s*(?:todo|tbd|placeholder|fixme|待填(?:写)?|待补(?:充)?|待完善|占位文字)[.!。\s]*$"
+    r"|^\s*lorem ipsum(?:\s+dolor\b|[.!\s]*$)", re.I)
 
 
 def number(value):

@@ -191,6 +191,10 @@ class DesignLintTests(unittest.TestCase):
         self.assert_issue("task")
         self.assert_issue("signal")
 
+    def test_localization_status_is_real_product_copy(self):
+        self.manifest["states"]["review"]["signal"] = "Missing placeholder {trip}"
+        self.assertTrue(self.lint()["ok"])
+
     def test_first_draft_only_needs_one_screen(self):
         self.manifest = {"states": {"draft": {"screen": "review.png"}}}
         report = self.lint("--layout-only")

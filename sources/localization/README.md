@@ -1,0 +1,14 @@
+# 多语言审阅与发布的界面实物
+
+需要做翻译核对、人工审阅、回归或发布状态时, 从具体功能选择同类产品截图, 点击官方页面可找到相关工具及其他状态
+
+| 产品实图 | 原图可观察的功能 | 来源 |
+|---|---|---|
+| [Apple Xcode · Agent 分批翻译与英意对照](apple-xcode-agent-translation.png) | 左栏选中 Translate my app into Italian, 中栏显示批次进度与 Get String Context 操作, 右栏字符串目录同时显示 Key、English、Italian 三列 | [官方页面](https://developer.apple.com/documentation/xcode/localizing-your-app-using-agents) · [原始图片](https://developer.apple.com/tutorials/images/com.apple.Xcode/localizing-using-agents-in-progress@2x.png) |
+| [Apple Xcode · 字符串目录与类型化占位符](apple-xcode-format-variable.png) | English、German 语言列表与 Key、English、Comment、State 列同屏, SUBTITLE 的编辑菜单列出 String、Int、UInt、Double 格式参数, 选中 Int | [官方页面](https://developer.apple.com/documentation/xcode/using-generated-localizable-symbols-in-your-code) · [原始图片](https://developer.apple.com/tutorials/images/com.apple.Xcode/add-localizable-strings-with-variables@2x.png) |
+| [Weblate · 法语译文的占位符错误](weblate-placeholder-check.png) | 英语单数与复数各包含 %(days)s, 两个法语译文字段均缺失它, 右栏 Python format 卡片显示缺失参数, 下方有术语、Billing 界面上下文图 | [官方页面](https://docs.weblate.org/en/latest/user/basic.html#translate-a-string) · [原始图片](https://raw.githubusercontent.com/WeblateOrg/weblate/499145bdcdb3c9076383a4244bd061d892bbb674/docs/screenshots/translation-quality.webp) |
+| [Mozilla Pontoon · 翻译工作区](pontoon-translation-workspace.png) | 左栏资源列表显示源文与译文, 中栏选中 Donor FAQ 并显示语境、资源地址和建议记录, 右栏列出翻译记忆与其它翻译来源 | [官方页面](https://pontoon.mozilla.org/docs/localizer/translation-workspace/) · [原始图片](https://pontoon.mozilla.org/docs/assets/localizer/translation-workspace/translation_workspace.png) |
+| [Mozilla Pontoon · 建议译文与已批准译文的差异](pontoon-suggestion-diff.png) | 三个翻译记录显示贡献者及状态, 选中一条建议的 DIFF 后, 意大利语句中删除和加入的片段分别呈红色和绿色 | [官方页面](https://pontoon.mozilla.org/docs/localizer/translation-workspace/#viewing-translation-differences) · [原始图片](https://pontoon.mozilla.org/docs/assets/localizer/translation-workspace/suggestions_diff.png) |
+| [GitHub · 逐行修改建议与批量接受](github-review-suggestion.png) | 一个代码建议包含删除行、增加行和行内差异, 下方有 Commit suggestion 和 Add suggestion to batch | [官方页面](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/incorporating-feedback-in-your-pull-request) · [原始图片](https://docs.github.com/assets/cb-81042/images/help/pull_requests/commit-suggestion-button.png) |
+| [GitHub · 文件改动与审阅范围](github-diff-settings.png) | 文件树和差异视图并排, 顶部显示 0 / 2 files viewed, 视图设置提供 Unified、Split, 右侧为审阅按钮 | [官方页面](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/reviewing-proposed-changes-in-a-pull-request) · [原始图片](https://docs.github.com/assets/cb-109516/images/help/pull_requests/diff-settings-menu.png) |
+| [GitHub Actions · 回归检查与部署依赖](github-actions-check-graph.png) | 运行视图同时显示作业清单与依赖图, build、integration、lint 和 unit test 节点连接到后续部署, 节点用状态标记及耗时表示执行情况 | [官方页面](https://docs.github.com/en/actions/how-tos/monitor-workflows/use-the-visualization-graph) · [原始图片](https://docs.github.com/assets/cb-63715/images/help/actions/workflow-graph.png) |

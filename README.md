@@ -1,11 +1,15 @@
-# 从一个整屏开始画 Agent 界面
+# 在 Figma 设计一个能处理整项工作的 Agent
 
-先选一个与你的任务相像的示例, 打开整屏和它的全部关键组件, 每张组件图都保留了成稿中的尺寸, 原始参考另存一处, 可以逐个打开
+从这三个可编辑的 Figma 示例开始, 在同一页追踪一项任务怎样从队列走到证据、Agent 运行、人工决定和下一步, 新设计的研究、组件和成稿也都放在 Figma 里
 
-| 任务 | 成稿 | 关键组件 | 本例怎样做出来 | 原始参考和官方入口 |
-|---|---|---|---|---|
-| 从队列中选一个问题, 对照证据审改动 | [Linear 整屏](examples/linear/final.png) | [看组件](examples/linear/components/) | [制作过程](examples/linear/process.md) · [详细规范](examples/linear/spec.json) | [Linear 原稿与产品素材](sources/linear/README.md) |
-| 在同一页比较两条记录, 决定是否采纳改动 | [shadcn/ui 整屏](examples/shadcn-ui/final.png) | [看组件](examples/shadcn-ui/components/) | [制作过程](examples/shadcn-ui/process.md) · [详细规范](examples/shadcn-ui/spec.json) | [shadcn/ui 官网组件实图](sources/shadcn-ui/README.md) |
-| 在 Mac 窗口内同时查看任务、活动和当前结果 | [Apple Liquid Glass 整屏](examples/apple-glass/final.png) | [看组件](examples/apple-glass/components/) | [制作过程](examples/apple-glass/process.md) · [详细规范](examples/apple-glass/spec.json) | [Apple 原始素材与设计资源](sources/apple-glass/README.md) |
+| 示例 | 打开哪些 Figma 节点 | 在画面里看什么 |
+|---|---|---|
+| Linear | [Foundations](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME/?node-id=5-242) · [Components](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME/?node-id=2-166) · [原始产品窗口](https://www.figma.com/design/cytw6jxvr7NDe0K406hGME/?node-id=7-29) · [Quarry 成稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=11-7202) | 8 项检查按状态归组, 队列保留当前位置, 详情呈现原始记录, 浮窗包括 Agent 请求、附件、回归与待审补丁, 初稿就确定了这些区域之间的关系 |
+| shadcn/ui | [整屏](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=47-20650) · [组件规范与官网实物](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=47-20892) | 先写出相隔 433 ms 的两个事件, 再对照官方 Dashboard 测量侧栏、表格和按钮, 在 Agent review 中串起请求、附件、三次工具活动、事件表和待审文件, Event trace 与 Patch 作为相邻视图 |
+| Apple Liquid Glass | [来源与设计规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=52-24248) · [首版](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=51-23751) · [分区透明](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=74-37804) · [全窗统一材质](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=75-38790) | 导航、问题切换、事件、预期、回放结果、工具用时和人工审阅共存, 研究板包含实物、局部对照、原尺寸组件、研究依据和本稿定义, 三版保持任务和位置一致以比较材质 |
 
-第一次用, 从[制作步骤](SKILL.md)开始, 已有初稿, 直接看[怎样检查排版](docs/lint.md)
+三个历史成稿可检查图层和可见功能, 未绑定原型跳转, 新设计要把可操作的评审流程连接起来
+
+开始制作时读[工作步骤](SKILL.md), 进入原稿和规范板逐项查看, 需要继续找实物时用 [Linear 原始素材](sources/linear/README.md)、[shadcn/ui 官网组件截图](sources/shadcn-ui/README.md) 和 [Apple 官方材料](sources/apple-glass/README.md), 原型和排版的自动检查见[检查说明](docs/lint.md)
+
+有新业务时按功能补真实产品参考, 例如这组[多语言审阅与发布实物](sources/localization/README.md)收录 Xcode、Weblate、Mozilla Pontoon 及 GitHub 的 8 张截图, 可对照字符串编辑、建议差异和发布回归

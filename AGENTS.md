@@ -1,1 +1,1 @@
-按 [SKILL.md](SKILL.md) 制作, 先从 [README.md](README.md) 选一个任务相近的整屏, 看完它的关键组件和对应原始参考, 再开始画第一稿
+先用 [README.md](README.md) 中的直达链接打开三个 Figma 原稿, 按 [SKILL.md](SKILL.md) 先做功能研究和实物对照, 再做原生组件规范及可操作的成稿, 研究过程直接保存在 Figma
