@@ -4,7 +4,8 @@ async function checkReferenceDepth({api, referenceArea, sources, descendants, te
   const prefix = new RegExp('^(' + fields.join('|') + ')\\s*[:：]\\s*(.*)$')
   const clean = s => s.toLowerCase().replace(/[\s,，.。:：、!?！？\-·]/g, '')
   function informative(s) {
-    return !!s && /[a-z\u3400-\u9fff]/i.test(s) && !/^(?:[ab]|待定|待补充?|待填写?|同上|参考(?:图|来源)?|比较(?:问题)?|对比|官方(?:网站|来源)?|采用|舍弃|借鉴|布局|组件|操作|很好|有用|提高效率|界面清晰|[a-z]?\d+|todo|tbd|n\/?a|placeholder)[\d\s.。!?！？-]*$/i.test(s.trim())
+    const generic = /^(?:[ab]|待定|待补充?|待填写?|同上|参考(?:图|来源)?|比较(?:问题)?|问题|对比|对照|第?\d+组|官方(?:网站|来源)?|采用|舍弃|借鉴|保留|沿用|布局|组件|操作|很好|有用|提高效率|界面清晰|提升体验|参考布局|使用方便|[a-z]?\d+|todo|tbd|n\/?a|placeholder|pair|question|comparison|reference)[\d\s.。!?！？#-]*$/i
+    return !!s && /[a-z\u3400-\u9fff]/i.test(s) && !generic.test(s.trim())
   }
   function annotations(nodes) {
     const values = Object.create(null)

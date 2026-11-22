@@ -147,6 +147,16 @@ test('requires an actual separate comparison item, its observation, its decision
   for (const key of ['source.pair','source.coverage','source.provenance','source.decision','source.rationale','source.repeated-observation']) assert.ok(b.errors.some(e => e.rule === key), key)
 })
 
+test('numbered pair captions do not describe a comparison and a generic design slogan is not an observation', async () => {
+  const b = board()
+  for (const [i, card] of b.sources.entries()) b.field(card, '比较问题').characters = '问题 ' + (1 + Math.floor(i / 2))
+  b.field(b.sources[0], '画面观察').characters = '界面清晰'
+  b.field(b.sources[0], '取舍理由').characters = '提升体验'
+  const report = await b.check()
+  assert.equal(report.comparisons.length, 0)
+  for (const rule of ['source.question','source.coverage','source.observation','source.rationale']) assert.ok(b.errors.some(e => e.rule === rule))
+})
+
 test('a linked original alone, broken bitmap, and invisible paint all fail at the affected card', async () => {
   const b = board()
   b.field(b.sources[0], '参考图').visible = false
