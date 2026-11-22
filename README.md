@@ -1,6 +1,8 @@
-# 在 Figma 设计一个能处理整项工作的 Agent
+# 用真实参考设计桌面 Agent
 
-从这三个可编辑的 Figma 示例开始, 在同一页追踪一项任务怎样从队列走到证据、Agent 运行、人工决定和下一步, 新设计的研究、组件和成稿也都放在 Figma 里
+交付时打开一张主界面, 用户能认出当前处理的对象、核对 Agent 的证据、作出决定, 旁边的两块板分别回答「参考了哪些产品」和「这个界面的组件怎样制作」
+
+从下面三个示例读起, 选一个作为布局依据, 用同业务的产品实物决定字段、状态和操作
 
 | 示例 | 打开哪些 Figma 节点 | 在画面里看什么 |
 |---|---|---|
@@ -8,14 +10,10 @@
 | shadcn/ui | [整屏](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=47-20650) · [组件规范与官网实物](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=47-20892) | 先写出相隔 433 ms 的两个事件, 再对照官方 Dashboard 测量侧栏、表格和按钮, 在 Agent review 中串起请求、附件、三次工具活动、事件表和待审文件, Event trace 与 Patch 作为相邻视图 |
 | Apple Liquid Glass | [来源与设计规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=52-24248) · [首版](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=51-23751) · [分区透明](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=74-37804) · [全窗统一材质](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=75-38790) | 导航、问题切换、事件、预期、回放结果、工具用时和人工审阅共存, 研究板包含实物、局部对照、原尺寸组件、研究依据和本稿定义, 三版保持任务和位置一致以比较材质 |
 
-三个历史成稿可检查图层和可见功能, 未绑定原型跳转, 新设计要把可操作的评审流程连接起来
+[Foldmap 的参考实物](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=164-77285)展示了如何把这套方法用到另一个业务, 12 张来源图按 6 个决定成对排列, [组件与规范](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=165-77401)展示审阅行、译文对照、Agent 检查、决定、发布门槛和复查结果, [审阅首稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=165-77832)把同一条德语记录的原文、缺少的占位符、候选译文和审阅动作放在一起
 
-网页打不开或 `figmosha targets` 报本地锁错误时, 在已配对 Figmosha 的电脑上从仓库根目录运行 `python3 tools/read_figma_examples.py`, 命令按示例列出上表 10 个原生节点的名称、可用尺寸和抽样文字或子层, 读取不全时返回非零退出码, 文件未配对时按输出提示打开对应原稿和插件后重试
+**开始制作**　打开[工作步骤](SKILL.md), 先确定一条需要人工判断的记录, 再打开三份 Figma 示例, 也可运行 `python3 tools/read_figma_examples.py` 定位原件, 仓库附有各例的整屏和原尺寸组件截图
 
-用节点 ID 定位整屏和组件规范, 在 Figma 画布查看队列、选中项、详情和审阅操作的位置关系, 再与规范板上的组件和产品实物逐项对照
+**查参考**　[Linear 原稿与官方产品图](sources/linear/README.md) · [shadcn/ui 官网组件](sources/shadcn-ui/README.md) · [Apple 官方图与材质指南](sources/apple-glass/README.md) · [多语言工具实物](sources/localization/README.md)
 
-开始制作时读[工作步骤](SKILL.md), 进入原稿和规范板逐项查看, 需要继续找实物时用 [Linear 原始素材](sources/linear/README.md)、[shadcn/ui 官网组件截图](sources/shadcn-ui/README.md) 和 [Apple 官方材料](sources/apple-glass/README.md), 原型和排版的自动检查见[检查说明](docs/lint.md)
-
-有新业务时按功能补真实产品参考, 例如这组[多语言审阅与发布实物](sources/localization/README.md)收录 Xcode、Weblate、Mozilla Pontoon 及 GitHub 的 8 张截图, 可对照字符串编辑、建议差异和发布回归
-
-看这套方法怎样用于新题目, 可以打开 Foldmap 的[参考取舍](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=164-77285)和[审阅首稿](https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/?node-id=165-77832), 对照德语译文缺少的 `{trip}` 和 Agent 建议, 再在[交互原型](https://www.figma.com/proto/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=165-78014&page-id=160%3A77215&starting-point-node-id=165%3A78014&scaling=scale-down&content-scaling=fixed)里采纳建议、运行复查并查看发布结果
+**验收**　[参考实物](docs/reference-native.md) · [组件与规范](docs/spec-native.md) · [运行 lint](docs/lint.md)

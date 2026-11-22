@@ -1,6 +1,6 @@
 const test = require('node:test')
 const assert = require('node:assert/strict')
-const {checkDesignPage} = require('./check_design_page.js')
+const {checkDesignPage, inspectDesignStructure} = require('./check_design_page.js')
 
 const sourceUrl = 'https://support.apple.com/guide/notes/welcome/mac'
 const imageHash = '49d950f98beaf6c054cc8af157cc403d27b62405'
@@ -95,14 +95,14 @@ function designFile() {
 }
 
 async function errorsAt(d, nodes) {
-  const {errors} = await checkDesignPage(d.api, {})
+  const {errors} = await inspectDesignStructure(d.api, {})
   assert.ok(errors.every(e => e.rule && e.nodeId && e.nodeName && e.message))
   assert.ok(errors.some(e => nodes.some(n => e.nodeId === n.id)), JSON.stringify(errors, null, 2))
 }
 
 test('reads the active page and returns the clickable source URL', async () => {
   const d = designFile()
-  const report = await checkDesignPage(d.api, {})
+  const report = await inspectDesignStructure(d.api, {})
   assert.deepEqual(report.errors, [])
   assert.equal(report.page.id, d.page.id)
   assert.ok(report.sources.some(s => s.url === sourceUrl && s.nodeName && s.nodeId))
@@ -113,7 +113,7 @@ test('selects a non-active page by exact name or node id', async () => {
   const active = d.layer('PAGE', '个人草稿', d.api.root, 0, 0, 0, 0, {loadAsync: async () => {}})
   d.api.currentPage = active
   for (const page of [d.page.name, d.page.id]) {
-    const report = await checkDesignPage(d.api, {page})
+    const report = await inspectDesignStructure(d.api, {page})
     assert.equal(report.page.id, d.page.id)
     assert.equal(d.api.currentPage, active)
     assert.deepEqual(report.errors, [])
@@ -124,7 +124,7 @@ test('a task may link directly to its actual component instead of including an i
   const d = designFile()
   d.task.children = [d.taskText]
   d.label(d.task, '确认发货控件', 8, 48, 120, {type: 'NODE', value: d.normal.id})
-  assert.deepEqual((await checkDesignPage(d.api, {})).errors, [])
+  assert.deepEqual((await inspectDesignStructure(d.api, {})).errors, [])
 })
 
 test('an unrelated internal node cannot serve as the task component', async () => {
@@ -207,11 +207,11 @@ test('a hidden reference image paint supplies no visible evidence', async () => 
 test('refuses an unknown page name, a screen id, and an ambiguous page name', async () => {
   const d = designFile()
   for (const page of ['不存在的页面', d.entry.n.id]) {
-    await assert.rejects(checkDesignPage(d.api, {page}), /找不到.*页面/)
+    await assert.rejects(inspectDesignStructure(d.api, {page}), /找不到.*页面/)
   }
   d.layer('PAGE', d.page.name, d.api.root, 0, 0, 0, 0, {loadAsync: async () => {}})
-  await assert.rejects(checkDesignPage(d.api, {page: d.page.name}), /同名.*ID/)
-  assert.deepEqual((await checkDesignPage(d.api, {page: d.page.id})).errors, [])
+  await assert.rejects(inspectDesignStructure(d.api, {page: d.page.name}), /同名.*ID/)
+  assert.deepEqual((await inspectDesignStructure(d.api, {page: d.page.id})).errors, [])
 })
 
 test('a full screen with all content outside its clipped bounds is reported at the screen', async () => {
@@ -232,7 +232,27 @@ test('localization placeholders in real product copy are usable content', async 
   d.entry.heading.characters = 'Missing placeholder {trip}'
   d.entry.data.characters = 'Placeholder mismatch'
   d.task.name = d.taskText.characters
-  assert.deepEqual((await checkDesignPage(d.api, {})).errors, [])
+  assert.deepEqual((await inspectDesignStructure(d.api, {})).errors, [])
   d.taskText.characters = 'PLACEHOLDER'
   await errorsAt(d, [d.task])
+})
+
+
+test('the default checker rejects the former one-card, one-family design even with a working prototype', async () => {
+  const d = designFile()
+  assert.deepEqual((await inspectDesignStructure(d.api)).errors, [])
+  const report = await checkDesignPage(d.api)
+  assert.ok(report.errors.some(e => e.nodeId === d.spec.id || e.nodeId === d.family.id))
+  assert.ok(report.errors.some(e => e.nodeId === d.refs.id || e.nodeId === d.source.id))
+  assert.ok(report.referenceDepth && report.specDepth)
+  assert.equal(report.surfaces.length, 2)
+})
+
+test('one composed product screen can document a task without a second navigable screen', async () => {
+  const d = designFile()
+  d.finals.children = [d.entry.n]
+  const report = await inspectDesignStructure(d.api)
+  assert.deepEqual(report.errors, [])
+  assert.equal(report.screens.length, 1)
+  assert.equal(report.prototype, undefined)
 })

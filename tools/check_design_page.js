@@ -1,5 +1,5 @@
-// For Figmosha, load figma_flow.js first, then call checkDesignPage(figma, options).
-async function checkDesignPage(api, options = {}) {
+// The CLI loads the four Figma inspection modules before this entry point.
+async function inspectDesignStructure(api, options = {}, inspectDetails) {
   const flow = typeof checkFigmaFlow === 'function' ? checkFigmaFlow : require('./figma_flow.js').checkFigmaFlow
   let page = api.currentPage
   if (options.page) {
@@ -14,7 +14,7 @@ async function checkDesignPage(api, options = {}) {
   const report = {page: {id: page.id, name: page.name}, errors, sources, tasks, screens, manualReview: [
     '对照需求逐项读任务卡, 核对覆盖范围、参考图的来历及所选组件是否适用于当前操作',
     '用接收方账号打开每个来源链接, 确认能看到对应原件',
-    '按目标尺寸查看整屏和关键控件, 核对字号、颜色、间距、图像、层级与规范, 在演示器实际完成各条操作',
+    '按 1× 查看首屏和关键控件, 核对阅读顺序、留白和分割, 对照原图确认实物取舍, 如有交互演示再核对业务结果',
   ]}
   function issue(rule, node, message) {
     errors.push({rule, nodeId: node.id, nodeName: node.name, message})
@@ -198,8 +198,29 @@ async function checkDesignPage(api, options = {}) {
     if (!valid.size) issue('source.link', card, '给来源文字设置可点击的原件链接, 直接输入地址时请确认 Figma 已生成超链接')
     for (const url of valid) sources.push({nodeId: card.id, nodeName: card.name, url})
   }
-  if (fullScreens.length) report.prototype = flow(page, fullScreens, descendants, issue)
+  if (fullScreens.length > 1) report.prototype = flow(page, fullScreens, descendants, issue)
+  if (inspectDetails) await inspectDetails({api, referenceArea, sources: references, library,
+    screens: fullScreens, descendants, textContent, links, familyOfInstance, issue}, report)
   return report
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = {checkDesignPage}
+async function checkDesignPage(api, options = {}) {
+  const reference = typeof checkReferenceDepth === 'function' ? checkReferenceDepth : require('./figma_reference_depth.js').checkReferenceDepth
+  const specimens = typeof checkSpecDepth === 'function' ? checkSpecDepth : require('./figma_spec_depth.js').checkSpecDepth
+  const surfaces = typeof checkSurfaceQuality === 'function' ? checkSurfaceQuality : require('./figma_surface_lint.js').checkSurfaceQuality
+  return inspectDesignStructure(api, options, async (context, report) => {
+    if (context.referenceArea) report.referenceDepth = await reference(context)
+    if (context.library) report.specDepth = await specimens(context)
+    report.surfaces = context.screens.map(screen => ({
+      screenId: screen.id, ...surfaces(screen, context.descendants, context.issue),
+    }))
+    const reviews = new Set(report.manualReview)
+    for (const note of report.referenceDepth?.manualReview || []) reviews.add(note)
+    for (const screen of report.surfaces) {
+      for (const note of screen.manualReview || []) reviews.add(note)
+    }
+    report.manualReview = [...reviews]
+  })
+}
+
+if (typeof module !== 'undefined' && module.exports) module.exports = {checkDesignPage, inspectDesignStructure}

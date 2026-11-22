@@ -9,6 +9,8 @@ from pathlib import Path
 
 
 TOOLS = Path(__file__).resolve().parent
+NATIVE_SCRIPTS = ("figma_flow.js", "figma_reference_depth.js", "figma_spec_depth.js",
+                  "figma_surface_lint.js", "check_design_page.js")
 
 
 def bridge_request(method, path, payload=None, timeout=290):
@@ -28,7 +30,7 @@ def bridge_request(method, path, payload=None, timeout=290):
 
 def check_page(target, page):
     scripts = [TOOLS.joinpath(name).read_text(encoding="utf-8")
-               for name in ("figma_flow.js", "check_design_page.js")]
+               for name in NATIVE_SCRIPTS]
     options = json.dumps({"page": page} if page else {})
     scripts.append(f"return await checkDesignPage(figma, {options})")
     result = bridge_request("POST", "/exec", {

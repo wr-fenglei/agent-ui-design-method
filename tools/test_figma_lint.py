@@ -53,7 +53,7 @@ class FigmoshaCommandTests(unittest.TestCase):
         self.assertTrue(tail.startswith("return await checkDesignPage(figma, "))
         self.assertEqual(json.loads(tail.split("figma, ", 1)[1][:-1]), {"page": page})
         libraries = [figma_lint.TOOLS.joinpath(name).read_text(encoding="utf-8")
-                     for name in ("figma_flow.js", "check_design_page.js")]
+                     for name in figma_lint.NATIVE_SCRIPTS]
         self.assertEqual(sent["code"], "\n".join([*libraries, tail]))
 
     def test_disconnected_target_and_malformed_response_are_execution_errors(self):
