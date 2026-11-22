@@ -1,7 +1,13 @@
 {
   "task": "TODO: 谁需要根据哪项证据完成哪项任务",
   "reference": {
-    "image": "reference.png", "source": "TODO: 原图作者、产品与画面或原图网址",
+    "case": "TODO: linear / shadcn-ui / apple-glass 选一个",
+    "source": "TODO: 所选案例及所参考的完整画面",
+    "views": {
+      "final": {"sha256": "TODO", "box": [0, 0, 0, 0], "observed": "TODO: 整屏某分区的尺寸、位置与内容", "apply": "TODO: 本稿据此安排哪项内容"},
+      "spec": {"sha256": "TODO", "box": [0, 0, 0, 0], "observed": "TODO: 规范图中一个控件或字级的具体做法", "apply": "TODO: 本稿对应控件或字级的做法"},
+      "process": {"sha256": "TODO", "box": [0, 0, 0, 0], "observed": "TODO: 过程图中一个修订位置及可见变化", "apply": "TODO: 本稿据此保留或调整哪一处"}
+    },
     "comparison": {
       "layout": ["TODO: 参考的主要分区和占比", "TODO: 本稿对应分区、占比和取舍"],
       "type": ["TODO: 参考标题与正文的大小关系", "TODO: 本稿对应字级关系和取舍"],
@@ -10,7 +16,7 @@
     }
   },
   "artifacts": {
-    "research": "research.png", "before": "before.png", "finalState": "review",
+    "research": "research.png", "spec": "spec.png", "before": "before.png", "finalState": "review",
     "revisionBox": [0, 0, 0, 0], "revision": "TODO: 这个位置从什么改成了什么"
   },
   "states": {
@@ -28,6 +34,24 @@
   "colors": {
     "ink": {"hex": "#000000", "use": "TODO"}, "paper": {"hex": "#FFFFFF", "use": "TODO"},
     "action": {"hex": "#000000", "use": "TODO"}
+  },
+  "palette": {
+    "states": {
+      "review": {
+        "window": {"token": "paper", "box": [0, 0, 0, 0], "sourceAt": [0, 0]},
+        "primary": {"token": "action", "box": [0, 0, 0, 0], "sourceRole": "spec", "sourceAt": [0, 0]}
+      },
+      "done": {
+        "reading": {"token": "paper", "box": [0, 0, 0, 0], "sourceAt": [0, 0]},
+        "primary": {"token": "ink", "box": [0, 0, 0, 0], "sourceAt": [0, 0]}
+      }
+    }
+  },
+  "media": {
+    "states": {
+      "review": {"alternate": "review-other.png", "boxes": [[0, 0, 0, 0]]},
+      "done": {"reason": "TODO: 此状态没有可替换图片时, 写出实际呈现的内容"}
+    }
   },
   "contrast": [
     {"state": "review", "style": "heading", "use": "TODO: 实际文字", "fg": "ink", "bg": "paper", "fgAt": [0, 0], "bgAt": [0, 0]},

@@ -9,11 +9,17 @@ from functools import lru_cache
 from pathlib import Path
 
 sys.dont_write_bytecode = True
+from design_alignment import check_alignment
+from design_case import CASES, check_case, snapshots
 from design_images import load_image, region_differs
+from design_media import check_media
+from design_palette import check_palette
 
 
 MANUAL_REVIEW = [
-    "并排打开主参考、研究板和成稿, 确认参考包含完整界面, 核对分区比例、标题层级、色彩面积、对齐和留白的实际观感",
+    "逐张打开所选案例的成稿、规范和过程图, 对照研究板及本稿核对观察框、分区比例、字级、色彩面积和间距, 指纹及字段只能验证提交的证据",
+    "核对色样取自范例的界面区域, 主要操作、品牌、各表面和成功提示均已登记, 内容图与界面色分开取样",
+    "在可编辑稿替换内容图并复核导出, 检查替换框是否贴合媒体边界, 逐项核对无媒体声明, 像素差异只反映提交的这组导出",
     "在可编辑稿中核对所声明的字体、行高、网格、密度、圆角、图标和材质, 确认色样坐标位于对应文字与背景",
     "对照主控件各变体的局部及修订区域, 检查触发条件、状态反馈与修订目标, 在可操作原型中验证交互",
     "作者按 1× 成稿逐项自查对象、证据、下一步和执行者是否清楚, 记录检查结果, 由用户确认视觉取舍",
@@ -79,6 +85,7 @@ class DesignLint:
         self.png_by_size = {}
         self.pixels = lru_cache(maxsize=2)(image_pixels)
         self.samples = []
+        self.case_dir = None
 
     def issue(self, path, message):
         self.errors.append({"path": path, "message": message})
@@ -166,7 +173,9 @@ class DesignLint:
 
     def ref_and_screens(self, data, states):
         ref = self.table(data, "reference")
-        self.image(ref.get("image"), "reference.image", ("reference",), png=False)
+        if "image" in ref:
+            self.image(ref["image"], "reference.image", ("reference",), png=False)
+        self.case_dir = check_case(self, ref)
         self.text(ref, "source", "reference")
         compare = self.table(ref, "comparison", "reference")
         for axis in ("layout", "type", "color", "spacing"):
@@ -192,6 +201,9 @@ class DesignLint:
             self.image(item.get("screen"), f"{path}.screen", state)
             self.text(item, "signal", path)
             self.text(item, "owner", path, short=True)
+        # Earlier deliveries used "specimens" for their standalone specification board.
+        spec = artifacts.get("spec", artifacts.get("specimens"))
+        self.image(spec, "artifacts.spec", ("spec",))
         final = artifacts.get("finalState")
         if not isinstance(final, str) or final not in states:
             self.issue("artifacts.finalState", "请选择 states 中的主画面")
@@ -415,10 +427,16 @@ class DesignLint:
         styles, colors = self.foundations(data, final)
         self.contrast(data.get("contrast"), styles, colors, final)
         self.controls(data, states, final)
+        self.alignment_samples = check_alignment(self, data, states, final)
+        media_boxes = check_media(self, data, final)
+        self.palette_samples = check_palette(self, data, final, colors, self.case_dir, media_boxes)
         self.pixels.cache_clear()
 
     def report(self):
         return {"ok": not self.errors, "errors": self.errors, "contrastSamples": self.samples,
+                "paletteSamples": getattr(self, "palette_samples", []),
+                "alignmentSamples": getattr(self, "alignment_samples", []),
+                "mediaSamples": getattr(self, "media_samples", []),
                 "manualReview": MANUAL_REVIEW}
 
 
@@ -437,9 +455,23 @@ def reject_constant(token):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("manifest", type=Path, help="path to a design-system JSON manifest in its delivery directory")
+    target = parser.add_mutually_exclusive_group(required=True)
+    target.add_argument("manifest", type=Path, nargs="?", help="path to a design-system JSON manifest in its delivery directory")
+    target.add_argument("--case", choices=CASES, help="list the three source files, native dimensions and SHA-256 for one example")
     parser.add_argument("--json", action="store_true", help="emit diagnostic paths, pixel measurements and manual checks as JSON")
     options = parser.parse_args()
+    if options.case:
+        try:
+            _, views, _ = snapshots(options.case)
+        except (ValueError, OSError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        if options.json:
+            print(json.dumps({"case": options.case, "views": views}, indent=2))
+        else:
+            for row in views.values():
+                print(f"{row['image']}  {row['width']}×{row['height']}  {row['sha256']}")
+        return 0
     path = options.manifest
     checker = DesignLint(path.parent.resolve())
     try:

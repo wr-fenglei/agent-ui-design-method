@@ -1,12 +1,11 @@
-# 和 Agent 一起画界面
+# 用三张参考图画 Agent 界面
 
-## 制作要求
+先选一行, 再依次打开这一行的三张原图, 用图片工具按原尺寸看规范上的字和组件
 
-[从这里开始设计](SKILL.md), 点图看原尺寸, 点图下方的链接看该稿从参考到成稿的过程
+| 你的任务 | 示例 | 整屏 | 最终规范 | 引用与制作过程 |
+|---|---|---|---|---|
+| 从队列选一项, 一边查证据一边审改动 | Linear | [看整屏](examples/linear/final.png) | [看规范](examples/linear/spec.png) | [看过程](examples/linear/process.png) |
+| 在同一页比较记录, 根据证据决定下一步 | shadcn/ui | [看整屏](examples/shadcn-ui/final.png) | [看规范](examples/shadcn-ui/spec.png) | [看过程](examples/shadcn-ui/process.png) |
+| 在 Mac 多栏窗口中同时看任务、活动和结果 | Apple Liquid Glass | [看整屏](examples/apple-glass/final.png) | [看规范](examples/apple-glass/spec.png) | [看过程](examples/apple-glass/process.png) |
 
-| Linear | shadcn/ui | Untitled UI | Apple Liquid Glass |
-|---|---|---|---|
-| [![问题队列和调查详情](evidence/linear.png)](evidence/linear.png) | [![调查经过与证据表](references/shadcn-ui.png)](references/shadcn-ui.png) | [![问题列表与侧栏详情](references/untitled-ui.png)](references/untitled-ui.png) | [![全窗统一左栏材质](references/apple-process/uniform.png)](references/apple-process/uniform.png) |
-| [看制作过程](examples/linear/README.md) | [看制作过程](examples/shadcn-ui/README.md) | [看制作过程](examples/untitled-ui/README.md) | [看制作过程](examples/apple-glass/README.md) |
-
-[历史首稿与案例](cases/index.md) · [研究原件与测量](references/README.md)
+[开始设计](SKILL.md) · [lint 检查什么, 怎样运行](docs/lint.md)
