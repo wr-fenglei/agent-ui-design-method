@@ -1,6 +1,8 @@
 """Pixel-level regressions for sourced interface colors, status badges and media."""
 
 import struct
+import subprocess
+import sys
 import tempfile
 import unittest
 import zlib
@@ -65,6 +67,29 @@ class PaletteTests(unittest.TestCase):
         self.assertEqual(result[1]['exportHex'], '#111111')
         self.roles['primary']['sourceAt'] = [4, 4]
         self.require_issue('primary.sourceAt', '#FFFFFF')
+
+    def test_first_screen_cli_samples_only_named_points_and_reports_exit_codes(self):
+        screen = self.path / 'screen.png'
+        write_pixels(screen, [(1, 2, 1, 1, self.green), (5, 1, 1, 1, (220, 235, 227)),
+                              (4, 6, 1, 1, (20, 120, 100)), (3, 0, 1, 1, (52, 90, 70))],
+                     width=8, height=7)
+        cli = Path(__file__).with_name('design_palette.py')
+        cases = [
+            (['reading=0,0', 'success=1,2'], 0, ['reading=(0,0) #FFFFFF', 'success=(1,2) #2B8341']),
+            (['selected=5,1', 'primary=4,6'], 3, ['selected=(5,1) #DCEBE3', 'primary=(4,6) #147864', '需复核']),
+            (['primary=1,2', 'selected=5,1'], 1, ['primary=(1,2) #2B8341', '不通过', '需复核']),
+            (['success=3,0'], 1, ['success=(3,0) #345A46', '不通过']),
+            (['selected=8,0'], 2, ['selected=(8,0)', 'outside 8x7']),
+            (['reading=0,bad'], 2, ['reading=0,bad']),
+        ]
+        for points, status, fragments in cases:
+            with self.subTest(points=points):
+                run = subprocess.run([sys.executable, '-B', str(cli), str(screen), *points],
+                                     capture_output=True, text=True)
+                output = run.stdout + run.stderr
+                self.assertEqual(run.returncode, status, output)
+                for fragment in fragments:
+                    self.assertIn(fragment, output)
 
     def test_source_image_must_belong_to_selected_case(self):
         other = self.path.parent / 'other.png'

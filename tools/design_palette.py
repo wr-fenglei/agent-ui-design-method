@@ -1,5 +1,6 @@
-"""Compare exported interface surfaces with pixels in the selected reference case."""
+"""Check sampled interface colors or compare exports with the selected reference case."""
 
+import argparse
 from collections import Counter
 from functools import lru_cache
 from math import ceil, sqrt
@@ -383,3 +384,50 @@ def check_palette(checker, data, final, colors, case_dir, media_boxes):
         if color in REJECTED or (green(color) and name not in success_tokens and color not in native_colors):
             checker.issue(f'colors.{name}.hex', f'界面语义色包含未获准的绿色 {hexcode(color)}')
     return result
+
+
+def sample_point(argument):
+    role, _, position = argument.partition('=')
+    if role not in ('primary', 'selected', 'reading', 'success'):
+        raise argparse.ArgumentTypeError(f'{argument}: 角色可选 primary, selected, reading, success')
+    try:
+        x, y = map(int, position.split(','))
+    except ValueError:
+        raise argparse.ArgumentTypeError(f'{argument}: 请用 角色=x,y 填写原图像素') from None
+    return role, x, y
+
+
+def main():
+    parser = argparse.ArgumentParser(description='按指定的 1× PNG 像素检查界面角色用色')
+    parser.add_argument('screen', type=Path)
+    parser.add_argument('points', nargs='+', type=sample_point, metavar='角色=x,y')
+    args = parser.parse_args()
+    try:
+        image = load_image(args.screen, pixels=True)
+    except (OSError, ValueError) as exc:
+        parser.exit(2, f'{args.screen}: {exc}\n')
+
+    failed = review = False
+    for role, x, y in args.points:
+        location = f'{args.screen} {role}=({x},{y})'
+        try:
+            rgb = image.rgb(x, y)
+        except ValueError as exc:
+            parser.exit(2, f'{location}: {exc}\n')
+        r, g, b = rgb
+        if rgb in REJECTED or (role != 'success' and green(rgb)):
+            result = '不通过, 当前角色使用了项目限制的绿色'
+            failed = True
+        elif role != 'success' and g > max(r, b) and not near(rgb, (g, g, g)):
+            result = '需复核, 绿通道占优, 请对照主参考和原尺寸画面'
+            review = True
+        else:
+            result = '该点未触发绿色限制'
+        print(f'{location} {hexcode(rgb)}  {result}')
+    if failed:
+        return 1
+    return 3 if review else 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

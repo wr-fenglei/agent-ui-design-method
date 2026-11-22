@@ -38,6 +38,9 @@ python3 tools/design_density.py first.png --json
 
 读图审校也可以把待评图片直接传给这条命令, 即使退出码为 0 也要查看 `manualReview`, 例如三条等距横线之间仅有两行短字段时会提示复看该区域, 请在图上判断横线是否帮助跨列读数, 然后逐区核对按钮和图标的位置
 
+Figma 或 HTML 首屏用 1× PNG, 执行 `python3 tools/design_palette.py first.png primary=100,80 selected=32,96 reading=280,160`, 把示例坐标换成从左上角量得的主按钮底、选中导航底和阅读表面像素, 避开字形和照片, 独立成功提示可加 `success=x,y`
+命令只核对指定点, 输出角色、坐标和色值, 返回 1 表示命中项目限制的绿色, 3 表示浅绿或相邻色需对照原图复核, 2 表示输入无效, 0 表示这些样点未触发规则
+
 ## 复核既有的像素清单
 
 已有状态 PNG 和机器清单的历史交付可以执行 `python3 tools/design_lint.py spec.json --layout-only` 重测各状态的排版, 执行 `python3 tools/design_lint.py spec.json --json` 复核已有的按钮对齐、界面色、文字对比及作品换图记录, 路径相对于清单, 新稿从上面的 Figma 命令和首稿 PNG 命令开始
