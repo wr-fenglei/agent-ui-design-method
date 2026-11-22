@@ -33,11 +33,10 @@ class FigmoshaCommandTests(unittest.TestCase):
         result, output, errors, sent = self.run_cli({"ok": True, "value": report}, "--json")
         self.assertEqual((result, errors), (0, ""))
         self.assertEqual(sent["target"], "workfile")
-        self.assertTrue(sent["code"].endswith('return await checkDesignPage(figma, {"mode": "single-screen"})'))
+        self.assertTrue(sent["code"].endswith("return await checkDesignPage(figma, {})"))
         self.assertEqual(json.loads(output)["sources"], [source])
         self.assertEqual(json.loads(output)["sourceAccess"]["status"], "unverified")
         _, text, _, _ = self.run_cli({"ok": True, "value": report})
-        self.assertIn("single-screen", text)
         self.assertIn(source["url"], text)
         self.assertIn("查看首稿导出", text)
         self.assertIn("核对访问权限", text)
@@ -46,22 +45,16 @@ class FigmoshaCommandTests(unittest.TestCase):
         issue = {"rule": "task.link", "nodeId": "5:8", "nodeName": "审阅补丁", "message": "补上对应的组件"}
         report = {"page": {"name": "迭代", "id": "5:1"}, "errors": [issue], "sources": []}
         page = '终稿 "B"\n第三行'
-        result, text, errors, sent = self.run_cli({"ok": True, "value": report}, "--page", page, "--mode", "workflow")
+        result, text, errors, sent = self.run_cli({"ok": True, "value": report}, "--page", page)
         self.assertEqual((result, errors), (1, ""))
         self.assertIn("审阅补丁 (5:8)", text)
         self.assertIn("补上对应的组件", text)
         tail = sent["code"].splitlines()[-1]
         self.assertTrue(tail.startswith("return await checkDesignPage(figma, "))
-        self.assertEqual(json.loads(tail.split("figma, ", 1)[1][:-1]), {"page": page, "mode": "workflow"})
+        self.assertEqual(json.loads(tail.split("figma, ", 1)[1][:-1]), {"page": page})
         libraries = [figma_lint.TOOLS.joinpath(name).read_text(encoding="utf-8")
-                     for name in ("figma_flow.js", "figma_screen_scope.js", "check_design_page.js")]
+                     for name in ("figma_flow.js", "check_design_page.js")]
         self.assertEqual(sent["code"], "\n".join([*libraries, tail]))
-
-    def test_rejects_unknown_mode_without_contacting_bridge(self):
-        with patch("figma_lint.bridge_request") as bridge, redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exit:
-            figma_lint.main(["--target", "workfile", "--mode", "single"])
-        self.assertEqual(exit.exception.code, 2)
-        bridge.assert_not_called()
 
     def test_disconnected_target_and_malformed_response_are_execution_errors(self):
         for value, status, expected in [

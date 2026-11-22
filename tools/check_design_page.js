@@ -1,8 +1,6 @@
-// For Figmosha, load figma_flow.js and figma_screen_scope.js before calling this function.
+// For Figmosha, load figma_flow.js first, then call checkDesignPage(figma, options).
 async function checkDesignPage(api, options = {}) {
-  const mode = options.mode === undefined ? 'single-screen' : options.mode
-  if (!['single-screen', 'workflow'].includes(mode)) throw Error('未知的 Figma 检查模式 ' + mode)
-  const single = mode === 'single-screen'
+  const flow = typeof checkFigmaFlow === 'function' ? checkFigmaFlow : require('./figma_flow.js').checkFigmaFlow
   let page = api.currentPage
   if (options.page) {
     const pages = api.root.children
@@ -13,12 +11,10 @@ async function checkDesignPage(api, options = {}) {
   }
   if (page.loadAsync) await page.loadAsync()
   const errors = [], sources = [], tasks = [], screens = []
-  const report = {mode, page: {id: page.id, name: page.name}, errors, sources, tasks, screens, manualReview: [
+  const report = {page: {id: page.id, name: page.name}, errors, sources, tasks, screens, manualReview: [
     '对照需求逐项读任务卡, 核对覆盖范围、参考图的来历及所选组件是否适用于当前操作',
     '用接收方账号打开每个来源链接, 确认能看到对应原件',
-    single
-      ? '按 1× 对照本题记录, 确认首屏能辨认对象、证据、Agent 发现和当前可做的操作, 核对图片或图表实际内容、字段关联、遮挡及静态浮层'
-      : '按目标尺寸查看整屏和关键控件, 核对字号、颜色、间距、图像、层级与规范, 在演示器实际完成各条操作',
+    '按目标尺寸查看整屏和关键控件, 核对字号、颜色、间距、图像、层级与规范, 在演示器实际完成各条操作',
   ]}
   function issue(rule, node, message) {
     errors.push({rule, nodeId: node.id, nodeName: node.name, message})
@@ -41,15 +37,13 @@ async function checkDesignPage(api, options = {}) {
       const region = clip && box ? intersection(clip, box) : box
       if (region && region.width > 0 && region.height > 0) out.push(node)
       if (node.clipsContent && !region) return
-      const layers = children(node)
-      for (const child of node.itemReverseZIndex ? layers.reverse() : layers) visit(child, node.clipsContent ? region : clip)
+      for (const child of children(node)) visit(child, node.clipsContent ? region : clip)
     }
     let clip = root.absoluteBoundingBox
     for (let p = root.parent; clip && p && p.type !== 'PAGE'; p = p.parent) {
       if (p.clipsContent && p.absoluteBoundingBox) clip = intersection(clip, p.absoluteBoundingBox)
     }
-    const layers = children(root)
-    if (clip) for (const n of root.itemReverseZIndex ? layers.reverse() : layers) visit(n, clip)
+    if (clip) for (const n of children(root)) visit(n, clip)
     cache.set(root.id, out)
     return out
   }
@@ -65,16 +59,6 @@ async function checkDesignPage(api, options = {}) {
   }
   const featureArea = area('功能与任务'), referenceArea = area('参考实物')
   const library = area('组件与规范'), release = area('成稿')
-  const supportingNames = new Set(['研究', '研究板', '首稿', '试排', '首稿与试排', '原尺寸样件'])
-  const boardTypes = ['FRAME', 'SECTION', 'GROUP', 'INSTANCE', 'COMPONENT', 'COMPONENT_SET']
-  if (single) {
-    const areas = new Set([featureArea, referenceArea, library, release].filter(Boolean).map(n => n.id))
-    for (const node of children(page)) {
-      if (boardTypes.includes(node.type) && !areas.has(node.id) && !supportingNames.has(node.name.trim())) {
-        issue('scope.unassigned', node, '将成稿放入「成稿」, 研究、首稿试排或样件放入对应资料区, 此画板的用途需确认')
-      }
-    }
-  }
   const cardTypes = ['FRAME', 'GROUP', 'SECTION']
   const placeholder = /^(?:todo|tbd|placeholder|fixme|待填(?:写)?|待补(?:充)?|待完善|占位文字)[.!。! ]*$|^lorem ipsum(?:\s+dolor\b|[.! ]*$)/i
   function textContent(n) {
@@ -82,15 +66,6 @@ async function checkDesignPage(api, options = {}) {
     if (Array.isArray(n.fills) && !n.fills.some(visible) && !(n.strokes || []).some(visible)) return ''
     const s = n.characters.trim()
     return placeholder.test(s) ? '' : s
-  }
-  function fullyInViewport(node, screen) {
-    const box = node.absoluteBoundingBox
-    for (let p = node.parent; p && p.type !== 'PAGE'; p = p.parent) {
-      if (p.id !== screen.id && !p.clipsContent) continue
-      const region = intersection(box, p.absoluteBoundingBox)
-      if (!region || region.width < box.width - 0.01 || region.height < box.height - 0.01) return false
-    }
-    return true
   }
   function componentsInside(n, top) {
     for (let p = n.parent; p && p.id !== top.id; p = p.parent) {
@@ -116,12 +91,7 @@ async function checkDesignPage(api, options = {}) {
       return body && !placeholder.test(body) && !/^https?:\/\//i.test(body)
     })
   }
-  const libraryNodes = library ? [...descendants(library)] : []
-  if (single) {
-    for (const board of children(page).filter(n => n.name.trim() === '原尺寸样件' && boardTypes.includes(n.type))) {
-      libraryNodes.push(board, ...descendants(board))
-    }
-  }
+  const libraryNodes = library ? descendants(library) : []
   const local = new Map(libraryNodes.filter(n => ['COMPONENT', 'COMPONENT_SET'].includes(n.type)).map(n => [n.id, n]))
   function family(n) { return n.type === 'COMPONENT' && n.parent.type === 'COMPONENT_SET' ? n.parent.id : n.id }
   const instances = new Map()
@@ -149,18 +119,7 @@ async function checkDesignPage(api, options = {}) {
   }
   const fullScreens = directItems(release, ['FRAME'])
   const placedFamilies = new Set(), seenScreens = new Map()
-  if (release && !fullScreens.length) issue('screen.frame', release, single
-    ? '在成稿分区直接放一张可见的首屏 Frame'
-    : '将每个原尺寸状态画板作为成稿分区的直接 Frame')
-  if (single && release) {
-    // Count artwork structurally, so a second frame cannot disappear by hiding or clipping it.
-    for (const node of release.children || []) {
-      if (boardTypes.includes(node.type) && node.id !== (fullScreens[0] && fullScreens[0].id)) {
-        issue('scope.extra-board', node, '成稿限一张可见的首屏 Frame, 研究、试排和原尺寸样件请独立放置')
-      }
-    }
-  }
-  const visibleCopy = []
+  if (release && !fullScreens.length) issue('screen.frame', release, '将每个原尺寸状态画板作为成稿分区的直接 Frame')
   for (const screen of fullScreens) {
     const nodes = descendants(screen), texts = nodes.map(textContent).filter(Boolean)
     const families = await instanceFamilies(nodes)
@@ -169,31 +128,15 @@ async function checkDesignPage(api, options = {}) {
       textLayers: texts.length, componentFamilies: [...families]})
     if (new Set(texts).size < 2) issue('screen.content', screen, '画面需要可见的业务内容和控件或状态文字, 请检查隐藏、裁切、缺失字体和占位层')
     if (library && !families.size) issue('screen.instances', screen, '在实际画面中使用规范区的组件实例, 检查实例是否已分离或被隐藏')
-    if (single) {
-      if (screen === fullScreens[0]) {
-        for (const n of nodes) if (textContent(n) && fullyInViewport(n, screen)) visibleCopy.push(textContent(n))
-      }
-      const scope = typeof checkScreenScope === 'function' ? checkScreenScope : require('./figma_screen_scope.js').checkScreenScope
-      scope(screen, nodes, issue)
-    } else {
-      const signature = appearance(screen)
-      if (seenScreens.has(signature)) issue('screen.duplicate', screen, '可见图层与「' + seenScreens.get(signature) + '」相同, 请展示操作后发生的变化')
-      else seenScreens.set(signature, screen.name)
-    }
+    const signature = appearance(screen)
+    if (seenScreens.has(signature)) issue('screen.duplicate', screen, '可见图层与「' + seenScreens.get(signature) + '」相同, 请展示操作后发生的变化')
+    else seenScreens.set(signature, screen.name)
   }
   const mapped = new Set(), cards = directItems(featureArea, cardTypes)
-  const requiredCopy = new Map()
   if (featureArea && !cards.length) issue('task.card', featureArea, '每项功能放一张任务卡, 将任务说明和关联组件放在同一 Frame 或 Group')
   for (const card of cards) {
     const nodes = descendants(card), ids = await instanceFamilies(nodes)
-    const checklists = single ? nodes.filter(n => n.type === 'TEXT' && n.name.trim() === '首屏核对' && !componentsInside(n, card)) : []
-    for (const list of checklists) {
-      for (const line of textContent(list).split(/\r?\n/)) {
-        const value = line.trim().replace(/\s+/g, ' ')
-        if (value && !placeholder.test(value) && !requiredCopy.has(value)) requiredCopy.set(value, list)
-      }
-    }
-    if (!note(nodes.filter(n => !checklists.includes(n)), card)) issue('task.description', card, '写出任务的对象、用户操作及预期结果, 请将说明放在组件实例外')
+    if (!note(nodes, card)) issue('task.description', card, '写出任务的对象、用户操作及预期结果, 请将说明放在组件实例外')
     for (const {link} of links(nodes)) if (link.type === 'NODE' && local.has(link.value)) ids.add(family(local.get(link.value)))
     if (!ids.size) issue('task.component', card, '任务缺少组件映射, 放入规范区组件的实例, 或将文字链接到该组件节点')
     for (const id of ids) {
@@ -201,23 +144,6 @@ async function checkDesignPage(api, options = {}) {
       if (release && !placedFamilies.has(id)) issue('task.unused', card, '「' + local.get(id).name + '」未在任何成稿状态中使用')
     }
     tasks.push({id: card.id, name: card.name, componentFamilies: [...ids]})
-  }
-  if (single) {
-    if (featureArea && requiredCopy.size < 2) {
-      issue('screen.evidence-list', featureArea, '在核心任务卡中放名为「首屏核对」的文字层, 每行写一项同屏核对的业务原文, 至少写两项不同的值')
-    }
-    const lines = visibleCopy.map(s => s.replace(/\s+/g, ' '))
-    report.contentChecks = []
-    for (const [value, list] of requiredCopy) {
-      // Match a complete identifier or word within a longer caption. SG-104 cannot verify SG-1042.
-      const literal = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const left = /^[A-Za-z0-9_]/.test(value) ? '(^|[^A-Za-z0-9_])' : ''
-      const right = /[A-Za-z0-9_]$/.test(value) ? '($|[^A-Za-z0-9_])' : ''
-      const matches = new RegExp(left + literal + right)
-      const found = lines.some(s => matches.test(s))
-      report.contentChecks.push({nodeId: list.id, value, found})
-      if (!found) issue('screen.evidence', list, '首屏缺少任务卡指定的可见业务原文「' + value + '」')
-    }
   }
   if (library) {
     const guidance = libraryNodes.filter(n => !componentsInside(n, library)).map(textContent).filter(Boolean).join('\n')
@@ -272,10 +198,7 @@ async function checkDesignPage(api, options = {}) {
     if (!valid.size) issue('source.link', card, '给来源文字设置可点击的原件链接, 直接输入地址时请确认 Figma 已生成超链接')
     for (const url of valid) sources.push({nodeId: card.id, nodeName: card.name, url})
   }
-  if (!single && fullScreens.length) {
-    const flow = typeof checkFigmaFlow === 'function' ? checkFigmaFlow : require('./figma_flow.js').checkFigmaFlow
-    report.prototype = flow(page, fullScreens, descendants, issue)
-  }
+  if (fullScreens.length) report.prototype = flow(page, fullScreens, descendants, issue)
   return report
 }
 
