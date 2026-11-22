@@ -95,14 +95,14 @@ function designFile() {
 }
 
 async function errorsAt(d, nodes) {
-  const {errors} = await checkDesignPage(d.api, {})
+  const {errors} = await checkDesignPage(d.api, {mode: 'workflow'})
   assert.ok(errors.every(e => e.rule && e.nodeId && e.nodeName && e.message))
   assert.ok(errors.some(e => nodes.some(n => e.nodeId === n.id)), JSON.stringify(errors, null, 2))
 }
 
 test('reads the active page and returns the clickable source URL', async () => {
   const d = designFile()
-  const report = await checkDesignPage(d.api, {})
+  const report = await checkDesignPage(d.api, {mode: 'workflow'})
   assert.deepEqual(report.errors, [])
   assert.equal(report.page.id, d.page.id)
   assert.ok(report.sources.some(s => s.url === sourceUrl && s.nodeName && s.nodeId))
@@ -113,7 +113,7 @@ test('selects a non-active page by exact name or node id', async () => {
   const active = d.layer('PAGE', '个人草稿', d.api.root, 0, 0, 0, 0, {loadAsync: async () => {}})
   d.api.currentPage = active
   for (const page of [d.page.name, d.page.id]) {
-    const report = await checkDesignPage(d.api, {page})
+    const report = await checkDesignPage(d.api, {page, mode: 'workflow'})
     assert.equal(report.page.id, d.page.id)
     assert.equal(d.api.currentPage, active)
     assert.deepEqual(report.errors, [])
@@ -124,7 +124,7 @@ test('a task may link directly to its actual component instead of including an i
   const d = designFile()
   d.task.children = [d.taskText]
   d.label(d.task, '确认发货控件', 8, 48, 120, {type: 'NODE', value: d.normal.id})
-  assert.deepEqual((await checkDesignPage(d.api, {})).errors, [])
+  assert.deepEqual((await checkDesignPage(d.api, {mode: 'workflow'})).errors, [])
 })
 
 test('an unrelated internal node cannot serve as the task component', async () => {
@@ -207,11 +207,11 @@ test('a hidden reference image paint supplies no visible evidence', async () => 
 test('refuses an unknown page name, a screen id, and an ambiguous page name', async () => {
   const d = designFile()
   for (const page of ['不存在的页面', d.entry.n.id]) {
-    await assert.rejects(checkDesignPage(d.api, {page}), /找不到.*页面/)
+    await assert.rejects(checkDesignPage(d.api, {page, mode: 'workflow'}), /找不到.*页面/)
   }
   d.layer('PAGE', d.page.name, d.api.root, 0, 0, 0, 0, {loadAsync: async () => {}})
   await assert.rejects(checkDesignPage(d.api, {page: d.page.name}), /同名.*ID/)
-  assert.deepEqual((await checkDesignPage(d.api, {page: d.page.id})).errors, [])
+  assert.deepEqual((await checkDesignPage(d.api, {page: d.page.id, mode: 'workflow'})).errors, [])
 })
 
 test('a full screen with all content outside its clipped bounds is reported at the screen', async () => {
@@ -232,7 +232,115 @@ test('localization placeholders in real product copy are usable content', async 
   d.entry.heading.characters = 'Missing placeholder {trip}'
   d.entry.data.characters = 'Placeholder mismatch'
   d.task.name = d.taskText.characters
-  assert.deepEqual((await checkDesignPage(d.api, {})).errors, [])
+  assert.deepEqual((await checkDesignPage(d.api, {mode: 'workflow'})).errors, [])
   d.taskText.characters = 'PLACEHOLDER'
   await errorsAt(d, [d.task])
+})
+
+function singleScreenFile() {
+  const d = designFile()
+  d.finals.children = [d.entry.n]
+  d.entry.button.reactions = []
+  d.page.flowStartingPoints = []
+  const checklist = d.label(d.task, 'SG-1042\n发货单记录 8 箱\n确认发货', 8, 100, 320)
+  checklist.name = '首屏核对'
+  return {...d, checklist}
+}
+
+test('default report checks one screen, including task values nested in an instance', async () => {
+  const d = singleScreenFile()
+  const report = await checkDesignPage(d.api)
+  assert.deepEqual(report.errors, [])
+  assert.equal(report.mode, 'single-screen')
+  assert.equal(report.prototype, undefined)
+  assert.deepEqual(report.screens.map(n => n.id), [d.entry.n.id])
+  assert.deepEqual(report.contentChecks, ['SG-1042', '发货单记录 8 箱', '确认发货'].map(value =>
+    ({value, nodeId: d.checklist.id, found: true})))
+})
+
+test('drafts, research boards and full-size component specimens are independent of the release', async () => {
+  const d = singleScreenFile()
+  for (const name of ['研究板', '首稿与试排']) {
+    const study = d.layer('SECTION', name, d.page, 0, 800, 1800, 700)
+    d.layer('FRAME', '对照用的候选整屏', study, 0, 10, 800, 560)
+    d.layer('FRAME', '第二个候选', study, 830, 10, 800, 560)
+  }
+  const samples = d.layer('FRAME', '原尺寸样件', d.page, 0, 1800, 540, 400)
+  d.spec.children = [d.specText]
+  samples.children.push(d.family)
+  d.family.parent = samples
+  assert.deepEqual((await checkDesignPage(d.api)).errors, [])
+})
+
+test('extra visible, hidden, clipped and wrapped release boards are reported at their nodes', async () => {
+  for (const variant of ['visible', 'hidden', 'clipped', 'group']) {
+    const d = singleScreenFile()
+    const extra = d.layer(variant === 'group' ? 'GROUP' : 'FRAME', '采纳后', d.finals, 860, 10, 800, 560)
+    if (variant === 'hidden') extra.visible = false
+    if (variant === 'clipped') {
+      d.finals.clipsContent = true
+      extra.x = 2000
+    }
+    if (variant === 'group') d.layer('FRAME', '结果', extra, 0, 0, 800, 560)
+    const {errors} = await checkDesignPage(d.api)
+    assert.ok(errors.some(e => e.rule === 'scope.extra-board' && e.nodeId === extra.id), variant)
+  }
+})
+
+test('a top-level frame outside assigned areas is reported, including a screen containing only an image', async () => {
+  const d = singleScreenFile()
+  const extra = d.layer('FRAME', '已发布', d.page, 3400, 0, 800, 560, {fills: d.capture.fills})
+  assert.ok((await checkDesignPage(d.api)).errors.some(e => e.rule === 'scope.unassigned' && e.nodeId === extra.id))
+})
+
+test('requires a non-placeholder checklist independent of the task description', async () => {
+  const d = singleScreenFile()
+  d.checklist.characters = 'TODO\nSG-1042\nSG-1042'
+  d.taskText.characters = ''
+  const {errors} = await checkDesignPage(d.api)
+  assert.ok(errors.some(e => e.rule === 'screen.evidence-list'))
+  assert.ok(errors.some(e => e.rule === 'task.description' && e.nodeId === d.task.id))
+})
+
+test('unrelated records, offscreen text, partially clipped text and research copy cannot prove the evidence', async () => {
+  for (const change of [
+    d => { d.entry.data.characters = '新到货物 24 箱' },
+    d => { d.entry.data.x = d.entry.n.width },
+    d => { d.entry.data.x = d.entry.n.width - 10 },
+    d => { d.entry.data.visible = false },
+  ]) {
+    const d = singleScreenFile()
+    d.label(d.spec, '发货单记录 8 箱', 12, 200, 180)
+    change(d)
+    const report = await checkDesignPage(d.api)
+    assert.deepEqual(report.contentChecks.filter(v => !v.found).map(v => v.value), ['发货单记录 8 箱'])
+    assert.ok(report.errors.some(e => e.rule === 'screen.evidence' && e.nodeId === d.checklist.id))
+  }
+})
+
+test('matches literal values with punctuation and preserves identifier boundaries', async () => {
+  const d = singleScreenFile()
+  d.checklist.characters = 'SG-104\n[状态 A+B]\n{trip}'
+  d.entry.data.characters = '检查 [状态 A+B] 与 {trip}'
+  const {contentChecks} = await checkDesignPage(d.api)
+  assert.deepEqual(contentChecks.map(c => c.found), [false, true, true])
+})
+
+test('single-screen rules run for CLI-equivalent page selection, including overlays', async () => {
+  const d = singleScreenFile()
+  d.entry.button.reactions = [{trigger: {type: 'ON_CLICK'},
+    actions: [{type: 'NODE', navigation: 'OVERLAY', destinationId: d.result.n.id}]}]
+  const {errors} = await checkDesignPage(d.api, {page: d.page.id, mode: 'single-screen'})
+  assert.ok(errors.some(e => e.rule === 'scope.overlay' && e.nodeId === d.entry.button.id))
+})
+
+test('workflow remains explicit and performs the original round-trip checks', async () => {
+  const d = designFile()
+  const workflow = await checkDesignPage(d.api, {mode: 'workflow'})
+  assert.deepEqual(workflow.errors, [])
+  assert.equal(workflow.mode, 'workflow')
+  assert.deepEqual(new Set(workflow.prototype.roundTrips), new Set([d.entry.n.id, d.result.n.id]))
+  assert.equal(workflow.contentChecks, undefined)
+  assert.ok((await checkDesignPage(d.api)).errors.some(e => e.rule === 'scope.extra-board'))
+  await assert.rejects(checkDesignPage(d.api, {mode: 'unknown'}), /未知/)
 })
