@@ -414,6 +414,9 @@ def main():
         print("自动检查通过" if report["ok"] else f"自动检查未通过, 共 {len(checker.errors)} 项")
         for item in checker.errors:
             print(f"  {item['path']}  {item['message']}")
+        for state, layout in report["layoutSamples"].items():
+            for note in layout["manualReview"]:
+                print(f"  {state}  需人工复核  {note}")
         for sample in checker.samples:
             print(f"  {sample['path']}  {sample['use']}  {sample['ratio']}:1 (要求 {sample['minimum']}:1)")
         if report.get("textLayerSamples"):
