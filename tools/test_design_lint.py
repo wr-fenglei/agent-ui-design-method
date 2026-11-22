@@ -123,6 +123,8 @@ def sample_manifest():
              "fg": "ink", "bg": "paper", "fgAt": [118, 28], "bgAt": [139, 28]},
             {"state": "review", "style": "body", "use": "Accept corrected date button",
              "fg": "paper", "bg": "action", "fgAt": [123, 130], "bgAt": [136, 130]},
+            {"state": "done", "style": "body", "use": "Open saved catalog entry",
+             "fg": "paper", "bg": "action", "fgAt": [123, 130], "bgAt": [136, 130]},
         ],
         "spacing": {"gaps": {"item": 8, "group": 16}, "density": "Tight index rows leave space around the source caption."},
         "edges": {"width": 1, "radius": 0, "use": "Square index row and a 1px divider at the panel edge."},
@@ -186,7 +188,8 @@ class DesignLintTests(unittest.TestCase):
         self.assertTrue(report["ok"], report["errors"])
         self.assertEqual(report["errors"], [])
         self.assertTrue(report["manualReview"])
-        heading, button = report["contrastSamples"]
+        heading, button, saved = report["contrastSamples"]
+        self.assertEqual(saved["state"], "done")
         self.assertEqual(heading["actual"], ["#2c2e34", "#ffffff"])
         self.assertAlmostEqual(heading["ratio"], 13.57, places=2)
         self.assertEqual(button["actual"], ["#ffffff", "#202020"])
@@ -343,8 +346,6 @@ class DesignLintTests(unittest.TestCase):
     def test_terminal_final_screen_still_requires_action_variants(self):
         self.manifest["artifacts"]["finalState"] = "done"
         self.manifest["states"]["done"].update(primary=None, primaryReason="The accepted date is locked after saving.")
-        for sample in self.manifest["contrast"]:
-            sample["state"] = "done"
         report = self.lint()
         self.assertTrue(report["ok"], report["errors"])
         del self.manifest["components"]["confirm"]["variants"]
@@ -353,6 +354,10 @@ class DesignLintTests(unittest.TestCase):
     def test_token_and_sampled_pixel_disagree(self):
         self.manifest["colors"]["ink"]["hex"] = "#1e3850"
         self.assert_issue("contrast", "colors")
+
+    def test_each_exported_state_needs_its_own_text_sample(self):
+        self.manifest["contrast"].pop()
+        self.assert_issue("contrast.done")
 
     def test_material_used_requires_its_location(self):
         self.manifest["material"]["used"] = True

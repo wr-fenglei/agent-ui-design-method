@@ -14,6 +14,7 @@ from design_case import CASES, check_case, snapshots
 from design_images import load_image, region_differs
 from design_media import check_media
 from design_palette import check_palette
+from design_text_layers import check_text_layers, contrast_minimum, contrast_ratio
 
 
 MANUAL_REVIEW = [
@@ -54,17 +55,6 @@ def specific(value, key="", short=False):
     if short:
         return True
     return len(chars) >= 4 and len(set(chars.casefold())) >= 3 and bool(re.search(r"[^\W_]", LABEL_WORDS.sub("", value)))
-
-
-def luminosity(rgb):
-    values = [channel / 255 for channel in rgb]
-    linear = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in values]
-    return sum(v * weight for v, weight in zip(linear, (0.2126, 0.7152, 0.0722)))
-
-
-def contrast_ratio(first, second):
-    dark, light = sorted((luminosity(first), luminosity(second)))
-    return (light + 0.05) / (dark + 0.05)
 
 
 def lookup(table, key):
@@ -281,9 +271,9 @@ class DesignLint:
             self.text(material, "use", "material")
         return styles, colors
 
-    def contrast(self, entries, styles, colors, final):
+    def contrast(self, entries, styles, colors, states):
         if not isinstance(entries, list) or len(entries) < 2:
-            self.issue("contrast", "请取样至少两处实际文字与邻近背景, 包含主画面")
+            self.issue("contrast", "请在每个状态取样实际文字及邻近背景, 总计至少两处")
             if not isinstance(entries, list):
                 return
         labels, locations, sampled_states = set(), set(), set()
@@ -329,7 +319,6 @@ class DesignLint:
             if location in locations:
                 self.issue(path + ".fgAt", "该文字像素已经被另一项取样")
             locations.add(location)
-            sampled_states.add(state)
             if not isinstance(style, dict):
                 continue
             line, size, weight = [style.get(key) for key in ("line", "size", "weight")]
@@ -339,15 +328,16 @@ class DesignLint:
             if len(samples) != 2 or not number(size) or not number(weight):
                 continue
             # WCAG 2.2 SC 1.4.3. The threshold uses unrounded luminances and CSS px at 1x.
-            threshold = 3 if size >= 24 or (size >= 14 * 96 / 72 and weight >= 700) else 4.5
+            threshold = contrast_minimum(size, weight)
             ratio = contrast_ratio(*samples)
             self.samples.append({"path": path, "state": state, "use": label,
                                  "actual": ["#" + bytes(v).hex() for v in samples],
                                  "ratio": round(ratio, 4), "minimum": threshold})
+            sampled_states.add(state)
             if ratio < threshold:
                 self.issue(path, f"实测文字对比度 {ratio:.4f}:1 低于所声明字级的 {threshold}:1")
-        if final and final not in sampled_states:
-            self.issue("contrast", "请在主画面取样文字及背景")
+        for state in sorted(states.keys() - sampled_states):
+            self.issue("contrast." + state, "请在此状态的 1× 导出中取样文字及邻近底色")
 
     def variants(self, record, path, required, states):
         if not required and "variants" not in record:
@@ -425,15 +415,17 @@ class DesignLint:
         states = self.table(data, "states", minimum=2)
         final = self.ref_and_screens(data, states)
         styles, colors = self.foundations(data, final)
-        self.contrast(data.get("contrast"), styles, colors, final)
+        self.contrast(data.get("contrast"), styles, colors, states)
         self.controls(data, states, final)
         self.alignment_samples = check_alignment(self, data, states, final)
         media_boxes = check_media(self, data, final)
+        self.text_layer_samples = check_text_layers(self, data, states, colors, media_boxes)
         self.palette_samples = check_palette(self, data, final, colors, self.case_dir, media_boxes)
         self.pixels.cache_clear()
 
     def report(self):
         return {"ok": not self.errors, "errors": self.errors, "contrastSamples": self.samples,
+                "textLayerSamples": getattr(self, "text_layer_samples", []),
                 "paletteSamples": getattr(self, "palette_samples", []),
                 "alignmentSamples": getattr(self, "alignment_samples", []),
                 "mediaSamples": getattr(self, "media_samples", []),
@@ -491,6 +483,10 @@ def main():
             print(f"  {item['path']}  {item['message']}")
         for sample in checker.samples:
             print(f"  {sample['path']}  {sample['use']}  {sample['ratio']}:1 (要求 {sample['minimum']}:1)")
+        if report["textLayerSamples"]:
+            measured = sum(row["status"] == "measured" for row in report["textLayerSamples"])
+            manual = len(report["textLayerSamples"]) - measured
+            print(f"  原生文字取样 {measured} 项, 另有 {manual} 项需人工复核, 坐标及原因见 --json")
         print("需人工核对")
         for item in MANUAL_REVIEW:
             print(f"  - {item}")

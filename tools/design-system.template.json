@@ -55,7 +55,8 @@
   },
   "contrast": [
     {"state": "review", "style": "heading", "use": "TODO: 实际文字", "fg": "ink", "bg": "paper", "fgAt": [0, 0], "bgAt": [0, 0]},
-    {"state": "review", "style": "body", "use": "TODO: 实际文字", "fg": "paper", "bg": "action", "fgAt": [0, 0], "bgAt": [0, 0]}
+    {"state": "review", "style": "body", "use": "TODO: 实际文字", "fg": "paper", "bg": "action", "fgAt": [0, 0], "bgAt": [0, 0]},
+    {"state": "done", "style": "body", "use": "TODO: 结果页的文字", "fg": "ink", "bg": "paper", "fgAt": [0, 0], "bgAt": [0, 0]}
   ],
   "spacing": {"gaps": {"item": 0, "group": 0}, "density": "TODO: 密集与宽松位置及阅读目的"},
   "edges": {"width": 0, "radius": 0, "use": "TODO: 实线或无边界的使用位置"},
