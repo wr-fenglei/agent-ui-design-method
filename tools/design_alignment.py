@@ -10,12 +10,14 @@ class ManualGeometry(ValueError):
 def measure_button(image, box):
     """Find an enclosed flat fill, then read the visible ink between its edges."""
     x, y, w, h = box
-    if w * h > 262144 or x == 0 or y == 0 or x+w >= image.width or y+h >= image.height:
-        raise ValueError("请框出单个按钮并保留可读取的屏内外沿")
+    if w * h > 262144:
+        raise ValueError("控件取样框超过 262144 像素, 请框出单个按钮")
     # Read one extra pixel around the crop. A cut through the button fill
     # connects it to this guard and cannot masquerade as a new button edge.
     stride = w + 2
-    pixels = [image.rgb(i, j) for j in range(y-1, y+h+1) for i in range(x-1, x+w+1)]
+    xs = [max(0, min(i, image.width-1)) for i in range(x-1, x+w+1)]
+    ys = [max(0, min(j, image.height-1)) for j in range(y-1, y+h+1)]
+    pixels = [image.rgb(i, j) for j in ys for i in xs]
     center = Counter(pixels[j*stride+i] for j in range(1+h//4, 1+h-h//4)
                      for i in range(1+w//4, 1+w-w//4))
     fill = center.most_common(1)[0][0]
@@ -59,16 +61,21 @@ def measure_button(image, box):
     if sw < w/2 or sh < h/2 or len(surface) < sw*sh/2:
         raise ManualGeometry("框内没有占据主体的连续按钮底面, 请核对按钮框")
     foreground = set()
+    tinted = 0
     for row, (start, end) in spans.items():
         for col in range(start+1, end):
             i = row*stride+col
             pixel = pixels[i]
+            if pixel != fill:
+                tinted += 1
             if max(abs(a-b) for a, b in zip(fill, pixel)) >= 48:
                 foreground.add(i)
     # Keep diagonal and 1px strokes while rejecting isolated raster noise.
     neighbors = (-stride-1, -stride, -stride+1, -1, 1, stride-1, stride, stride+1)
     ink = [divmod(i, stride) for i in foreground if any(i+n in foreground for n in neighbors)]
     if len(ink) < 3:
+        if tinted >= 3:
+            raise ManualGeometry("底面内的可见变化不足以分辨字形, 请检查实图或说明需人工复核的样式")
         raise ValueError("底面内缺少可测的文字或图标像素, 请核对实图位置")
     ink_rows = sorted({row for row, col in ink})
     first, last = ink_rows[0], ink_rows[-1]
