@@ -17,3 +17,5 @@
 **查参考**　[Linear 原稿与官方产品图](sources/linear/README.md) · [shadcn/ui 官网组件](sources/shadcn-ui/README.md) · [Apple 官方图与材质指南](sources/apple-glass/README.md) · [多语言工具实物](sources/localization/README.md)
 
 **验收**　[参考实物](docs/reference-native.md) · [组件与规范](docs/spec-native.md) · [运行 lint](docs/lint.md)
+
+实验分支吸收了 Google Labs Stitch 的三处做法, 在出图前限定每份参考的职责, 有争议的取舍用一个变量的局部对照检验, 最后核对规范色与实际控件, [生成任务与变体](https://github.com/google-labs-code/stitch-skills/tree/main/plugins/stitch-design/skills/generate-design) · [从已有组件提取样式](https://github.com/google-labs-code/stitch-skills/tree/main/plugins/stitch-design/skills/extract-design-md)

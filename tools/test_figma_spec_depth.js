@@ -5,9 +5,9 @@ const {checkSpecDepth} = require('./figma_spec_depth.js')
 const colors = {背景: '#FFFFFF', 正文: '#202124', 次文字: '#65686C', 主操作: '#26272B',
   选中: '#ECEEF0', 警示: '#A23830', 通过: '#34674B', 分割线: '#E3E4E5'}
 
-function solid(hex) {
+function solid(hex, opacity = 1) {
   const [r, g, b] = hex.slice(1).match(/../g).map(channel => parseInt(channel, 16) / 255)
-  return {type: 'SOLID', color: {r, g, b}, opacity: 1, visible: true}
+  return {type: 'SOLID', color: {r, g, b}, opacity, visible: true}
 }
 
 function fixture() {
@@ -37,8 +37,8 @@ function fixture() {
     return node(parent, 'TEXT', name, 220, 24, {characters, fontName: {family: 'Inter', style: 'Regular'},
       fontSize: 14, lineHeight: {unit: 'PIXELS', value: 20}, fills: [solid(colors.正文)], ...extra})
   }
-  function link(parent, target) {
-    return text(parent, '成稿位置', '查看出库校对窗口中的位置', {hyperlink: {type: 'NODE', value: target.id}})
+  function link(parent, target, name = '成稿位置') {
+    return text(parent, name, '查看出库校对中的对应位置', {hyperlink: {type: 'NODE', value: target.id}})
   }
   function reference(card, measurement) {
     text(card, '来源', `Linear 原件的实测值为 ${measurement}`, {hyperlink: {type: 'URL',
@@ -100,7 +100,7 @@ function fixture() {
   text(surface, '说明', '窗口使用浅灰底面, 出库单正文在白色阅读面, 表头下方用 1 px 分隔线, 同组记录用 12 px 组距')
   const data = [
     ['导航', 'SG-1042 当前出库单', 'SG-1067 待选出库单'], ['证据', '订单 SG-1042 载明 8 箱'],
-    ['运行', '仓库条码已扫描', '条码校验失败'], ['决定', '确认发出 8 箱', '暂缓到货确认'],
+    ['运行', '仓库条码已扫描', '条码校验失败'], ['决定', '确认发出 8 箱', '已确认发出 8 箱'],
     ['复查', '八箱货物均已签收'], ['工具', '检索物流记录'],
   ]
   const placed = {}
@@ -121,7 +121,8 @@ function fixture() {
       text(master, '标签', label)
       return master
     }
-    const first = variant('默认', colors.选中, label)
+    const firstColor = {导航: colors.选中, 决定: colors.主操作}
+    const first = variant(role === '导航' ? '选中' : '默认', firstColor[role] || colors.背景, label)
     const c = card('样件/' + role)
     placed[role] = instance(role === '导航' ? navigation : reading, first)
     examples[role] = instance(c, first)
@@ -129,10 +130,17 @@ function fixture() {
     text(c, '说明', second ? `默认状态显示“${label}”, 切换后显示“${second}”, 与当前出库单关联` :
       `在出库单校对时显示“${label}”, 给仓库人员核实发货对象`)
     if (second) {
-      const next = variant('异常', colors.警示, second)
+      const state = {导航: '待选', 运行: '异常', 决定: '已确认'}[role]
+      const next = variant(state, colors.背景, second)
       variants[role] = instance(c, next)
     }
   }
+  const warningIcon = node(variants.运行, 'VECTOR', '条码校验失败图标', 16, 16,
+    {strokes: [solid(colors.警示)], strokeWeight: 2})
+  const passedLabel = named(variants.决定, '标签')
+  passedLabel.fills = [solid(colors.通过)]
+  link(cards.get('色彩/警示'), warningIcon, '用色位置/描边')
+  link(cards.get('色彩/通过'), passedLabel, '用色位置')
   for (const [name, role, caption] of [
     ['原始记录', '证据', '订单 SG-1042 载明 8 箱, 清点人员核实装车数'],
     ['签收结果', '复查', 'SG-1042 的 8 个箱码均已签收, 可关闭本次审阅'],
@@ -269,6 +277,7 @@ test('a differently named state with identical native appearance does not count'
   duplicate.getMainComponentAsync = original.getMainComponentAsync
   duplicate.fills = original.fills
   duplicate.children[0].characters = original.children[0].characters
+  duplicate.children.length = 1
   await rejects(d, 'spec.states')
 })
 
@@ -293,6 +302,70 @@ test('internally consistent swatches and typography still need matching usage in
     named(card, '参数').characters = '#C18CB6'
     await rejects(example, 'spec.palette')
   }
+})
+
+test('main action and selection swatches measure the registered release controls', async () => {
+  for (const [role, specimenRole] of [['主操作', '决定'], ['选中', '导航']]) {
+    const d = fixture()
+    assert.deepEqual(await d.run(), [])
+    const card = d.cards.get('色彩/' + role)
+    const control = d.placed[specimenRole]
+    d.node(d.screen, 'RECTANGLE', '版面中的其他区域', 320, 120, {fills: [solid(colors[role])]})
+    d.node(control, 'VECTOR', '控件中的图标', 16, 16, {fills: [solid(colors[role])]})
+    control.fills = [solid('#C2029D')]
+    const errors = await d.run()
+    assert.deepEqual(errors.filter(e => e.rule === 'spec.palette').map(e => e.nodeId), [card.id])
+  }
+})
+
+test('linked control backgrounds compare the named native layer and its effective opacity', async () => {
+  for (const [role, specimenRole] of [['主操作', '决定'], ['选中', '导航']]) {
+    const d = fixture()
+    const card = d.cards.get('色彩/' + role)
+    const control = d.placed[specimenRole]
+    const swatch = named(card, '色样')
+    swatch.fills = [solid(colors[role], 0.5)]
+    const frame = d.node(control, 'FRAME', '控件内层', 180, 36, {opacity: 0.5})
+    const bottom = d.node(frame, 'RECTANGLE', '底色/' + role, 180, 36, {fills: [solid(colors[role])]})
+    assert.deepEqual(await d.run(), [])
+    const position = d.link(card, bottom, '用色位置')
+    assert.deepEqual(await d.run(), [])
+    const unrelated = d.node(d.screen, 'RECTANGLE', '其他区域', 180, 36, {fills: swatch.fills})
+    position.hyperlink.value = unrelated.id
+    const unrelatedErrors = await d.run()
+    assert.deepEqual(unrelatedErrors.filter(e => e.rule === 'spec.palette').map(e => e.nodeId), [card.id])
+    position.hyperlink.value = bottom.id
+    frame.opacity = 0.7
+    const opacityErrors = await d.run()
+    assert.deepEqual(opacityErrors.filter(e => e.rule === 'spec.palette').map(e => e.nodeId), [card.id])
+  }
+})
+
+test('warning and pass are measured on state specimens, including stroke and text', async () => {
+  const d = fixture()
+  assert.deepEqual(await d.run(), [])
+  const warning = d.cards.get('色彩/警示')
+  const passed = d.cards.get('色彩/通过')
+  const icon = named(d.variants.运行, '条码校验失败图标')
+  icon.strokes = [solid(colors.警示, 0.8)]
+  named(d.variants.决定, '标签').fills = [solid(colors.警示)]
+  const errors = await d.run()
+  assert.deepEqual(errors.filter(e => e.rule === 'spec.palette').map(e => e.nodeId), [warning.id, passed.id])
+  icon.strokes = [solid(colors.警示)]
+  named(passed, '用色位置').hyperlink.value =
+    d.text(d.placed.决定, '已确认', '已确认', {fills: [solid(colors.通过)]}).id
+  const releaseErrors = await d.run()
+  assert.deepEqual(releaseErrors.filter(e => e.rule === 'spec.palette').map(e => e.nodeId), [passed.id])
+})
+
+test('an unsupported status can document its absence while still defining the swatch', async () => {
+  const d = fixture()
+  const card = d.cards.get('色彩/通过')
+  const position = named(card, '用色位置')
+  card.children = card.children.filter(n => n !== position)
+  await rejects(d, 'spec.palette')
+  d.text(card, '说明', '未使用 · 签收结果归档后以文字记录, 本流程没有单独的通过状态')
+  assert.deepEqual(await d.run(), [])
 })
 
 test('a surface using background blur requires a measured control and comparison', async () => {

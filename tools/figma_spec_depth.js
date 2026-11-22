@@ -101,18 +101,6 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
     sourceDecision('字阶', card)
   })
   if (typeSizes['标题'] <= typeSizes['正文']) issue('spec.typography.hierarchy', library, '当前标题与正文的实测字阶未拉开, 请复核标题角色和阅读层级')
-  required('spec.palette', '色彩', ['背景', '正文', '次文字', '主操作', '选中', '警示', '通过', '分割线'], (role, card) => {
-    const sample = named(card, '色样')
-    const hex = note(card, '参数').match(/#[0-9a-f]{6}\b/i)
-    const paint = paintKey(sample)
-    let inUse = true
-    if (role === '正文') inUse = screenText.some(n => paintKey(n) === paint)
-    if (role === '背景') inUse = Array.from(releaseNodes.values()).some(n => n.type !== 'TEXT'
-      && n.width >= owner.get(n.id).width * 0.2 && n.height >= owner.get(n.id).height * 0.2 && paintKey(n) === paint)
-    if (sample && sample.type !== 'TEXT' && hex && hex[0].toUpperCase() === colorHex(solid(sample)) && inUse) counts.palette++
-    else issue('spec.palette', card, '放入原生「色样」并在「参数」写相同的六位 HEX, 正文与背景色样的填充、透明度需与成稿中的文字及大底面一致')
-    sourceDecision('色彩', card)
-  })
 
   function measurementTarget(node) {
     if (releaseNodes.has(node.id)) return true
@@ -160,9 +148,6 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
     else issue('spec.geometry', card, '「参数」须与 NODE 链接目标的原生几何一致, 宽高写作 144 × 36 px, 单值写作 8 px, 焦点指向实际描边或焦点环')
     sourceDecision('几何', card)
   })
-  for (const section of ['字阶', '色彩', '几何']) if (!sectionsWithSource.has(section)) {
-    issue('spec.provenance', library, '「' + section + '」至少选一项并列写出「来源」「参数」「取舍」, 保留原图链接和原始单位')
-  }
   const landmarkNames = {
     检查栏: ['检查器', '检查栏', '检查面板', 'inspector', 'inspector panel'],
     工具栏: ['工具栏', 'toolbar', 'command bar'],
@@ -266,6 +251,7 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
     return families.get(n.id)
   }
   const exemplars = new Set(), stateFamilies = new Set(), usedPositions = new Set()
+  const specimenPositions = new Map(), specimenStates = new Set()
   for (const [role, aliases] of Object.entries(roleNames)) {
     const card = aliases.map(a => cardMap.get('样件/' + a)).find(Boolean)
     if (!card) {
@@ -275,23 +261,28 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
     const instances = values(card).filter(n => n.type === 'INSTANCE')
     const destinations = targets(card).filter(n => n.type === 'INSTANCE' && inRelease(n))
     const linkedFamilies = new Set()
+    const linkedPositions = new Map()
     for (const target of destinations) {
       const id = await family(target)
       if (!id) continue
-      for (const n of instances) if (await family(n) === id && sizeEqual(n, target)) linkedFamilies.add(id)
+      for (const n of instances) if (await family(n) === id && sizeEqual(n, target)) {
+        linkedFamilies.add(id)
+        linkedPositions.set(target.id, id)
+        break
+      }
     }
     if (linkedFamilies.size !== 1 || !note(card, '说明')) {
       issue('spec.specimen', card, '「样件/' + role + '」放本地原生实例及状态/用途「说明」, 将文字 NODE 链接到对应成稿实例, 核对家族及 1:1 宽高')
       continue
     }
     const [id] = linkedFamilies
-    const positions = []
-    for (const target of destinations) if (await family(target) === id && !usedPositions.has(target.id)) positions.push(target.id)
-    if (!positions.length) {
+    const position = destinations.find(n => linkedPositions.get(n.id) === id && !usedPositions.has(n.id))
+    if (!position) {
       issue('spec.specimen.placement', card, '此成稿实例已经展示过, 请标出本项任务实际使用的实例')
       continue
     }
-    usedPositions.add(positions[0])
+    usedPositions.add(position.id)
+    specimenPositions.set(role, position)
     counts.specimenRoles++
     exemplars.add(id)
     const seenStates = []
@@ -299,6 +290,7 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
       if (await family(n) !== id) continue
       const state = stateName(n)
       if (!state) continue
+      specimenStates.add(n.id)
       const signature = visualState(n)
       if (seenStates.some(prior => prior.state !== state && prior.signature !== signature)) stateFamilies.add(id)
       seenStates.push({state, signature})
@@ -307,6 +299,86 @@ async function checkSpecDepth({library, screens, descendants, textContent, links
   counts.specimenFamilies = exemplars.size
   counts.stateFamilies = stateFamilies.size
   if (stateFamilies.size < 3) issue('spec.states', library, '在三个关键样件家族中各展示两种可辨认的状态, 使用真实变体或将两个实例命名为「状态/业务状态」, 只改图层名称无法通过')
+
+  const controlRoles = {主操作: '决定', 选中: '导航'}
+  const statusRoles = new Set(['警示', '通过'])
+  function rolePaint(node, boundary, property = 'fills') {
+    if (!Array.isArray(node[property])) return null
+    const paints = node[property].filter(p => p.visible !== false && p.opacity !== 0)
+    if (paints.length !== 1 || paints[0].type !== 'SOLID') return null
+    const [paint] = paints
+    let alpha = paint.opacity ?? 1
+    for (let layer = node; layer; layer = layer.parent) {
+      alpha *= layer.opacity ?? 1
+      if (layer.id === boundary.id) break
+    }
+    return colorHex(paint) + '/' + alpha.toFixed(4)
+  }
+  function usePositions(card) {
+    return values(card).filter(n => n.name.trim() === '用色位置' || n.name.trim() === '用色位置/描边')
+  }
+  function paintMatchesLinks(positions, test) {
+    return positions.every(position => {
+      const refs = links([position])
+      const property = position.name.trim() === '用色位置/描边' ? 'strokes' : 'fills'
+      return refs.length && refs.every(({link}) => {
+        const node = link.type === 'NODE' && nodeIndex.get(link.value)
+        return node && test(node, property)
+      })
+    })
+  }
+  function controlBottoms(instance, role) {
+    const marked = descendants(instance).filter(n => key(n) === '底色/' + role)
+    return marked.length ? marked : [instance]
+  }
+  function controlPaintInUse(role, positions, paint) {
+    const instance = specimenPositions.get(controlRoles[role])
+    if (positions.length) return paintMatchesLinks(positions, (n, property) => {
+      if (!inRelease(n) || n.type === 'TEXT' || property !== 'fills') return false
+      const atControl = instance && n.id === instance.id && controlBottoms(instance, role).includes(instance)
+      return (atControl || key(n) === '底色/' + role) && rolePaint(n, scopeOf(n)) === paint
+    })
+    return instance && controlBottoms(instance, role).every(n => n.type !== 'TEXT' && rolePaint(n, scopeOf(n)) === paint)
+  }
+  function statusPaintInUse(card, positions, paint) {
+    const unused = /^未使用\s*[·:：]\s*\S/.test(note(card, '说明'))
+    if (unused) return !positions.length
+    return positions.length && paintMatchesLinks(positions, (n, property) => {
+      if (n.type === 'TEXT' && !textContent(n)) return false
+      if (property === 'strokes' && n.strokeWeight === 0) return false
+      for (let layer = n; layer && layer.id !== library.id; layer = layer.parent) {
+        if (specimenStates.has(layer.id)) return rolePaint(n, layer, property) === paint
+      }
+      return false
+    })
+  }
+  required('spec.palette', '色彩', ['背景', '正文', '次文字', '主操作', '选中', '警示', '通过', '分割线'], (role, card) => {
+    const sample = named(card, '色样')
+    const hex = note(card, '参数').match(/#[0-9a-f]{6}\b/i)
+    const needsUseLink = controlRoles[role] || statusRoles.has(role)
+    const paint = sample && (needsUseLink ? rolePaint(sample, sample) : paintKey(sample))
+    let inUse = true
+    let usage = '正文与背景色样的填充、透明度需与成稿文字及大底面一致'
+    if (role === '正文') inUse = screenText.some(n => paintKey(n) === paint)
+    if (role === '背景') inUse = Array.from(releaseNodes.values()).some(n => n.type !== 'TEXT'
+      && n.width >= owner.get(n.id).width * 0.2 && n.height >= owner.get(n.id).height * 0.2 && paintKey(n) === paint)
+    if (paint && controlRoles[role]) {
+      inUse = controlPaintInUse(role, usePositions(card), paint)
+      usage = '量成稿实际控件的底色和透明度, 可直接测已登记的' + controlRoles[role] +
+        '实例底色, 或用「用色位置」NODE 链接到成稿的「底色/' + role + '」'
+    }
+    if (paint && statusRoles.has(role)) {
+      inUse = statusPaintInUse(card, usePositions(card), paint)
+      usage = '将「用色位置」NODE 链接到本地状态样件的实际呈色层, 测描边时用「用色位置/描边」, ' +
+        '业务没有该状态时在「说明」写「未使用 · 原因」'
+    }
+    if (sample && sample.type !== 'TEXT' && paint && hex && hex[0].toUpperCase() === colorHex(solid(sample)) && inUse) counts.palette++
+    else issue('spec.palette', card, '放入原生「色样」并在「参数」写相同的六位 HEX, ' + usage)
+    sourceDecision('色彩', card)
+  })
+  for (const section of ['字阶', '色彩', '几何']) if (!sectionsWithSource.has(section)) {
+    issue('spec.provenance', library, '「' + section + '」至少选一项并列写出「来源」「参数」「取舍」, 保留原图链接和原始单位')
+  }
 
   const contextSignatures = new Set(), contextTargets = new Set()
   for (const card of cards.filter(n => parts(n.name)[0] === '情境' && parts(n.name)[1])) {
