@@ -16,6 +16,7 @@ BOX = (8, 8, 10, 10)
 INK = (44, 50, 65)
 ART = (90, 130, 40)
 SWAP = (180, 23, 42)
+MARK = ((11, 12, 4, 2), (246, 232, 213))
 
 
 def draw(path, patches, size=SIZE, *, rgba=False):
@@ -38,7 +39,7 @@ class MediaTests(unittest.TestCase):
         self.folder = Path(temporary.name).resolve()
         self.alt = self.folder / "swap.png"
         draw(self.folder / "review.png", [(BOX, ART)])
-        draw(self.alt, [(BOX, SWAP)])
+        draw(self.alt, [(BOX, SWAP), MARK])
         self.data = {"states": {"review": {}, "saved": {}}, "media": {"states": {
             "review": {"alternate": "swap.png", "boxes": [list(BOX)]},
             "saved": {"reason": "Saved state lists the corrected date and attribution in text."},
@@ -56,7 +57,7 @@ class MediaTests(unittest.TestCase):
         self.assertIn(word, str(self.checker.errors))
 
     def test_visible_replacement_and_immutable_chrome(self):
-        draw(self.alt, [(BOX, SWAP + (255,))], rgba=True)
+        draw(self.alt, [(box, color + (255,)) for box, color in [(BOX, SWAP), MARK]], rgba=True)
         self.assertEqual(self.evaluate(), {"review": [BOX], "saved": []})
         self.assertEqual(self.checker.media_samples[0]["boxes"][0]["changedPixels"], 100)
         self.assertTrue(self.checker.media_samples[0]["outsideUnchanged"])
@@ -65,10 +66,37 @@ class MediaTests(unittest.TestCase):
         self.record["boxes"].append([37, 6, 8, 8])
         self.assert_failure("boxes[1]")
 
+    def test_white_transparent_and_framed_empty_replacements(self):
+        box = (8, 6, 36, 27)
+        sheet = (255, 255, 255, 255)
+        self.record["boxes"] = [list(box)]
+        draw(self.folder / "review.png", [(box, ART)])
+        for label, patches in [
+            ("white", [(box, sheet)]),
+            ("transparent", [(box, SWAP + (0,)), ((14, 11, 10, 5), ART + (0,))]),
+            ("border and shadow", [(box, INK + (255,)), ((10, 8, 32, 23), sheet),
+                                   ((20, 14, 1, 1), ART + (255,))]),
+        ]:
+            with self.subTest(label=label):
+                draw(self.alt, patches, rgba=True)
+                self.assert_failure("作品框内部呈空白")
+                sample = self.checker.media_samples[0]
+                self.assertTrue(sample["outsideUnchanged"])
+                self.assertGreaterEqual(sample["boxes"][0]["changedPixels"], sample["boxes"][0]["minimum"])
+
+    def test_small_off_center_mark_on_white_paper_passes(self):
+        box = (8, 6, 36, 27)
+        self.record["boxes"] = [list(box)]
+        draw(self.folder / "review.png", [(box, ART)])
+        draw(self.alt, [(box, (255, 255, 255)), ((14, 12, 1, 5), INK), ((14, 16, 4, 1), INK)])
+        self.assertEqual(self.evaluate()["review"], [box])
+        self.assertFalse(self.checker.errors)
+
     def test_even_one_drifting_pixel_between_two_slots_fails(self):
         other = (26, 8, 10, 10)
         self.record["boxes"].append(list(other))
-        draw(self.alt, [(BOX, SWAP), (other, SWAP), ((24, 12, 1, 1), (45, 50, 65))])
+        draw(self.alt, [(BOX, SWAP), MARK, (other, SWAP), ((29, 12, 4, 2), MARK[1]),
+                        ((24, 12, 1, 1), (45, 50, 65))])
         self.assert_failure("(24, 12)")
         self.assertFalse(self.checker.media_samples[0]["outsideUnchanged"])
 

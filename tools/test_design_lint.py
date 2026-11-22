@@ -214,21 +214,27 @@ class DesignLintTests(unittest.TestCase):
     def test_full_delivery_checks_media_before_exempting_artwork_colors(self):
         box = [250, 55, 75, 63]
         art = (*box, (52, 90, 70))
-        replacement = (*box, (168, 64, 35))
+        replacement = [(*box, (168, 64, 35)), (265, 69, 9, 14, (241, 218, 188))]
         write_screen(self.folder / "review.png", 3, patches=[art])
         alternate = self.folder / "review-other.png"
-        write_screen(alternate, 3, patches=[replacement])
+        write_screen(alternate, 3, patches=replacement)
         self.manifest["media"]["states"]["review"] = {"alternate": alternate.name, "boxes": [box]}
         report = self.lint()
         self.assertTrue(report["ok"], report["errors"])
         self.assertEqual(report["mediaSamples"][0]["boxes"][0]["changedPixels"], 75 * 63)
         self.assertTrue(report["mediaSamples"][0]["outsideUnchanged"])
 
-        write_screen(alternate, 3, patches=[replacement, (117, 120, 1, 1, (33, 32, 32))])
+        write_screen(alternate, 3, patches=[*replacement, (117, 120, 1, 1, (33, 32, 32))])
         report = self.lint()
         self.assertFalse(report["ok"])
         self.assertFalse(report["mediaSamples"][0]["outsideUnchanged"])
         self.assertTrue(any("117, 120" in e["message"] for e in report["errors"]))
+
+        write_screen(alternate, 3, patches=[(*box, PAPER)])
+        report = self.lint()
+        self.assertFalse(report["ok"])
+        self.assertTrue(any(e["path"] == "media.states.review.boxes[0]" and "空白" in e["message"]
+                            for e in report["errors"]))
 
     def test_export_path_cannot_leave_package(self):
         external = self.folder.parent / "external.png"

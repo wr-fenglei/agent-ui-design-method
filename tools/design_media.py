@@ -1,11 +1,13 @@
 """Check the visible pixels of a source swap against the registered state export."""
 
+from itertools import accumulate
 from math import ceil
 import re
 
 from design_images import CHANNELS, region_differs
 
 
+VISIBLE_DELTA = 12
 NO_MEDIA_ONLY = re.compile(r"^(?:n/?a|none|not applicable|no (?:media|images?|artwork)|"
                            r"(?:无|没有|不含|无需)(?:可替换)?(?:媒体|素材|图片|作品|换图)(?:可替换)?)\W*$", re.I)
 
@@ -93,9 +95,33 @@ def replacement_count(left, right, box):
         for offset in range(w):
             a = composited_rgb(left._visible_rgba(li + offset * lb))
             b = composited_rgb(right._visible_rgba(ri + offset * rb))
-            if max(abs(a[i] - b[i]) for i in range(3)) >= 12:
+            if max(abs(a[i] - b[i]) for i in range(3)) >= VISIBLE_DELTA:
                 count += 1
     return count
+
+
+def has_visible_detail(image, box):
+    """Look for two visible tones inside the artwork, independent of how much paper it leaves."""
+    x, y, w, h = box
+    # An exported frame can retain a stroke or shadow when its image is missing.
+    inset = min(4, min(w, h) // 6)
+    width, height = w - 2 * inset, h - 2 * inset
+    support = min(4, max(1, width * height // 8))
+    histograms = [[0] * 256 for _ in range(3)]
+    bpp = CHANNELS[image.color]
+    for row in range(y + inset, y + h - inset):
+        image._decode_through(row)
+        start = row * (1 + image.width * bpp) + 1 + (x + inset) * bpp
+        for offset in range(start, start + width * bpp, bpp):
+            rgb = composited_rgb(image._visible_rgba(offset))
+            for histogram, value in zip(histograms, rgb):
+                histogram[value] += 1
+    # Discard isolated specks. A small mark on a mostly blank sheet still counts.
+    for histogram in histograms:
+        low = next(value for value, total in enumerate(accumulate(histogram)) if total >= support)
+        if sum(histogram[low + VISIBLE_DELTA:]) >= support:
+            return True
+    return False
 
 
 def check_pair(checker, data, state, record, field):
@@ -126,6 +152,8 @@ def check_pair(checker, data, state, record, field):
             measured.append({"box": list(box), "changedPixels": changed, "minimum": minimum})
             if changed < minimum:
                 checker.issue(f"{field}.boxes[{index}]", f"只有 {changed} 个像素出现可见换图差异, 该框至少需要 {minimum} 个")
+            if not has_visible_detail(right, box):
+                checker.issue(f"{field}.boxes[{index}]", "换图导出的作品框内部呈空白, 请确认替换作品已载入并可见, 再导出该状态")
         checker.media_samples.append({"state": state, "boxes": measured,
                                       "outsideUnchanged": drift is None})
     except (OSError, ValueError) as exc:
