@@ -1,0 +1,87 @@
+{
+  "case": "Quarry 发布审查",
+  "final": "final.png",
+  "frame": "https://www.figma.com/design/scYOkdhE2byoPHW4Gk1aDL/Untitled?node-id=11-7202",
+  "state": "Release audit 中选中了 RL-238, 订单 TEST-8072 出现重复事件, Codex 已生成补丁, 正等待人工审阅",
+  "measurement": {
+    "unit": "设计 px, Figma 1× 导出",
+    "coordinates": "以下 xywh 依次为左, 上, 宽, 高, 原点为 final.png 左上角, pixel_xy 指同一图的单个像素",
+    "verified_at": "1440 × 940 桌面画板, 英文, 8 个检查项, 2 条事件, 3 条活动, 1 个补丁, 这是单状态静态导出",
+    "other_sizes": "原参考稿另有同一条 UI-142 的 560 × 40 主组件, 399 × 40 桌面实例和 340 × 40 手机实例, Quarry 成稿只测了上述桌面画板",
+    "history": "0fa35e3:evidence/linear.js 与 0fa35e3:evidence/frame-measurements.json"
+  },
+  "regions": [
+    {"name": "产品窗口", "xywh": [44, 56, 1352, 828], "boundary": "圆角 13, 内描边 1, #323439"},
+    {"name": "工作区导航", "xywh": [45, 107, 222, 776], "content": "工作区, 审查队列, 已保存视图和当前用户"},
+    {"name": "发布队列", "xywh": [268, 107, 373, 776], "content": "Needs review 3 项, In progress 2 项, Passed 3 项"},
+    {"name": "问题详情", "xywh": [642, 107, 753, 776], "content": "上方显示标题, 状态和订单证据, 左下显示期望结果与活动记录"},
+    {"name": "Codex 浮窗", "xywh": [965, 447, 405, 409], "content": "请求, 检查结果, 补丁, 审阅入口, 追问输入框", "boundary": "圆角 11, 内描边 1, #35363D, 黑色投影透明度 48%, 偏移 [0,12], 模糊 28, 扩展 1"}
+  ],
+  "spacing": {
+    "navigation": "选中项 202 × 32, 距侧栏左右各 10, 同组行的起点相隔 35",
+    "queue": "组标题高 33, 问题行高 47, 搜索和筛选按钮各 33 × 29, 两按钮边缘间距 6",
+    "evidence": "证据标题和时间列距详情左沿 26, 两行时间文本起点相隔 40, 证据表底线在 y=430, 浮窗顶边在 y=447",
+    "agent": "请求框, 补丁行和输入框距浮窗左右各 13, 补丁行底边至审阅按钮顶边 11, 输入框底边至浮窗底边 15"
+  },
+  "typography": [
+    {"role": "问题主标题", "family": "Inter", "weight": "Medium", "size": 26, "line_height": "Auto, 单行文字层高 31"},
+    {"role": "详情说明", "family": "Inter", "weight": "Regular", "size": 14, "line_height": 21},
+    {"role": "证据区标题", "family": "Inter", "weight": "Semi Bold", "size": 15, "line_height": "Auto, 单行文字层高 18"},
+    {"role": "选中问题标题, 审阅按钮", "family": "Inter", "weight": "Semi Bold", "size": 12, "line_height": "Auto, 单行文字层高 15"},
+    {"role": "事件时间", "family": "JetBrains Mono", "weight": "Regular", "size": 11, "line_height": "Auto, 单行文字层高 15"}
+  ],
+  "palette": [
+    {"role": "画板", "hex": "#090A0C", "pixel_xy": [0, 0]},
+    {"role": "导航", "hex": "#121314", "pixel_xy": [105, 190]},
+    {"role": "队列", "hex": "#0E0F10", "pixel_xy": [550, 841]},
+    {"role": "详情", "hex": "#0B0C0E", "pixel_xy": [755, 855]},
+    {"role": "选中行", "hex": "#1D1F24", "pixel_xy": [389, 383]},
+    {"role": "浮窗", "hex": "#17181B", "pixel_xy": [1030, 452]},
+    {"role": "标题", "hex": "#F7F8F8", "pixel_xy": [848, 174]},
+    {"role": "正文", "hex": "#D0D6E0", "pixel_xy": [811, 366]},
+    {"role": "说明", "hex": "#9EA4AE", "pixel_xy": [892, 211]},
+    {"role": "编号等辅助文字", "hex": "#828892", "pixel_xy": [753, 129]},
+    {"role": "审阅按钮底色和选中标线", "hex": "#5E6AD2", "pixel_xy": [1100, 766]},
+    {"role": "审阅按钮文字", "hex": "#FFFFFF", "pixel_xy": [1064, 757]},
+    {"role": "进行中", "hex": "#F2C94C", "pixel_xy": [288, 391]},
+    {"role": "已发出, 补丁新增", "hex": "#54BD7B", "pixel_xy": [1254, 368]},
+    {"role": "重复发出, 补丁删除", "hex": "#EC8083", "pixel_xy": [1272, 408]}
+  ],
+  "components": [
+    {
+      "name": "选中的调查项",
+      "image": "components/finding-row.png",
+      "crop": [268, 367, 373, 47],
+      "detail": "左侧 2 px 靛蓝标线, 8 px 黄色状态点, 状态点, 编号和标题的左沿距行左侧分别为 17, 34, 95, 时间右对齐, 距行右侧 20"
+    },
+    {
+      "name": "订单事件证据",
+      "image": "components/event-evidence.png",
+      "crop": [668, 298, 699, 133],
+      "detail": "同一订单的两条事件共用时间, 来源, 事件名, 结果四列, 各列文字框左沿相对首列位于 0, 113, 328, 555, 行尾同时写出 EMITTED 或 DUPLICATE"
+    },
+    {
+      "name": "补丁文件行",
+      "image": "components/patch-file.png",
+      "crop": [978, 684, 379, 45],
+      "detail": "圆角 7, 1 px 描边 #303238, 文件图标后显示文件名, 右侧分别用 +8 和 −2 显示增删行数, 末端箭头居中"
+    },
+    {
+      "name": "审阅按钮",
+      "image": "components/review-patch.png",
+      "crop": [978, 740, 135, 33],
+      "detail": "圆角 6, 单行白字在靛蓝底上水平和垂直居中, 旁边的回归数量留在按钮外, 此状态的操作是打开补丁审阅"
+    },
+    {
+      "name": "追问输入框",
+      "image": "components/reply-field.png",
+      "crop": [978, 799, 379, 42],
+      "detail": "圆角 7, 1 px 描边 #26272B, 提示文字距左侧 12, 右侧 35 × 21 的 Enter 键帽与直径 28 的发送按钮相距 7"
+    }
+  ],
+  "sparse_content": {
+    "observed": "最后一条队列记录的下沿在 y=635, 底部计数的文字框从 y=849 开始, 214 px 留白保留在记录和底部计数之间",
+    "reuse_guidance": "只有一条记录时沿用行高和列对齐, 只显示有数据的组, 单条事件保留真实时间和结果, 补丁尚未生成时按当前状态解释下一步, 生成后再显示文件与审阅按钮",
+    "scope": "单项和无补丁状态属于迁移建议, 此案例只保存了包含 8 项和一个待审补丁的成稿"
+  }
+}

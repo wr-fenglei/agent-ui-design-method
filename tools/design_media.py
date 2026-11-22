@@ -143,15 +143,17 @@ def check_media(checker, data, final):
     entries = data.get("media")
     declared = entries.get("states") if isinstance(entries, dict) else None
     if not isinstance(declared, dict):
-        checker.issue("media.states", "请逐状态提供换图导出及作品框, 无作品的状态注明界面内容")
+        checker.issue("media.states", "请逐状态提供换图导出及作品框, 无可替换作品的状态填 null")
         return validated
     for state in declared.keys() - states.keys():
         checker.issue(f"media.states.{state}", "找不到对应的交付状态")
     for state in states:
         field = f"media.states.{state}"
         record = declared.get(state)
-        if not isinstance(record, dict):
-            checker.issue(field, "请提供该状态的换图证据或说明无作品的原因")
+        if state in declared and record is None:
+            validated[state] = []
+        elif not isinstance(record, dict):
+            checker.issue(field, "请提供该状态的换图导出和作品框, 无可替换作品时填 null")
         elif set(record) == {"reason"}:
             before = len(checker.errors)
             checker.text(record, "reason", field)
@@ -165,5 +167,5 @@ def check_media(checker, data, final):
             if boxes:
                 validated[state] = boxes
         else:
-            checker.issue(field, "有作品需填写 alternate 和 boxes, 无作品需填写 reason")
+            checker.issue(field, "有可替换作品时填写 alternate 和 boxes, 无可替换作品时填 null")
     return validated

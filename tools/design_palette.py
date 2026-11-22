@@ -3,6 +3,7 @@
 from collections import Counter
 from functools import lru_cache
 from math import ceil, sqrt
+from pathlib import Path
 
 from design_images import load_image
 
@@ -76,15 +77,22 @@ def checked_sample(checker, record, field, state, role, colors, source_image, im
         return None
     if role != 'success' and green(color):
         checker.issue(field+'.token', f'界面或主操作使用了绿色 {hexcode(color)}')
-    source_role = record.get('sourceRole', 'final')
-    point = record.get('sourceAt')
-    if source_role not in ('final', 'spec'):
-        checker.issue(field+'.sourceRole', '请选择本案例的 final 或 spec')
+    if 'sourceRole' in record and record['sourceRole'] != 'final':
+        checker.issue(field+'.sourceRole', '请用 sourceImage 指定本案例的 final.png 或 components/文件名.png')
         return None
+    source_name = record.get('sourceImage', 'final.png')
+    if not isinstance(source_name, str):
+        checker.issue(field+'.sourceImage', '请填写本案例内的图片路径')
+        return None
+    point = record.get('sourceAt')
     if not isinstance(point, list) or len(point) != 2 or any(type(n) is not int for n in point):
         checker.issue(field+'.sourceAt', '请填写案例原图实像素 [x,y]')
         return None
-    source = source_image(source_role)
+    try:
+        source = source_image(source_name)
+    except (ValueError, OSError, RuntimeError) as exc:
+        checker.issue(field+'.sourceImage', str(exc))
+        return None
     if source is None:
         return None
     try:
@@ -93,7 +101,7 @@ def checked_sample(checker, record, field, state, role, colors, source_image, im
         checker.issue(field+'.sourceAt', str(exc))
         return None
     if not near(color, ref):
-        checker.issue(field+'.sourceAt', f'原图 {source_role}{point} 实测 {hexcode(ref)}, 与 {hexcode(color)} 每通道允差 8')
+        checker.issue(field+'.sourceAt', f'原图 {source_name} {point} 实测 {hexcode(ref)}, 与 {hexcode(color)} 每通道允差 8')
     if not box:
         return None
     count = hits = 0
@@ -108,7 +116,7 @@ def checked_sample(checker, record, field, state, role, colors, source_image, im
     if not located or hits < fraction * count:
         checker.issue(field+'.box', f'框内只有 {hits}/{count} 个界面取样点符合 {hexcode(color)}, 要求至少 {fraction:.0%}')
         return None
-    return {'state': state, 'role': role, 'token': token, 'sourceRole': source_role, 'sourceAt': point,
+    return {'state': state, 'role': role, 'token': token, 'sourceImage': source_name, 'sourceAt': point,
             'sourceHex': hexcode(ref), 'exportAt': located[0], 'exportHex': located[1],
             'matchingSamples': hits, 'samples': count}
 
@@ -251,13 +259,21 @@ def check_palette(checker, data, final, colors, case_dir, media_boxes):
     result = []
 
     @lru_cache(maxsize=2)
-    def source_image(role):
-        if case_dir:
-            try:
-                return load_image(case_dir / (role + '.png'), pixels=True)
-            except (ValueError, OSError) as exc:
-                checker.issue('palette.source', str(exc))
-        return None
+    def source_image(name):
+        if not case_dir:
+            return None
+        parts = name.split('/')
+        component = (len(parts) == 2 and parts[0] == 'components' and '\\' not in parts[1]
+                     and Path(parts[1]).suffix == '.png')
+        if name != 'final.png' and not component:
+            raise ValueError('请选择本案例的 final.png 或 components/文件名.png')
+        root = case_dir.resolve()
+        path = (root / name).resolve(strict=True)
+        if (component and path.parent != root / 'components') or (not component and path != root / 'final.png'):
+            raise ValueError('色源路径须指向所选案例的原图')
+        if not path.is_file():
+            raise ValueError('色源路径须指向 PNG 文件')
+        return load_image(path, pixels=True)
 
     for state, row in states.items():
         path = checker.named_files.get(state)

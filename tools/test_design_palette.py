@@ -30,7 +30,8 @@ class PaletteTests(unittest.TestCase):
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
-        self.path = Path(tmp.name)
+        self.path = Path(tmp.name) / 'example'
+        (self.path / 'components').mkdir(parents=True)
         self.colors = {'paper': (255, 255, 255), 'ink': (17, 17, 17)}
         self.button = (110, 85, 42, 22)
         self.rects = [(*self.button, self.colors['ink'])]
@@ -59,10 +60,25 @@ class PaletteTests(unittest.TestCase):
     def test_observations_use_source_and_export_pixels(self):
         errors, result = self.run_check()
         self.assertEqual(errors, [])
+        self.assertEqual(result[1]['sourceImage'], 'final.png')
         self.assertEqual(result[1]['sourceHex'], '#111111')
         self.assertEqual(result[1]['exportHex'], '#111111')
         self.roles['primary']['sourceAt'] = [4, 4]
         self.require_issue('primary.sourceAt', '#FFFFFF')
+
+    def test_source_image_must_belong_to_selected_case(self):
+        other = self.path.parent / 'other.png'
+        write_pixels(other, self.rects)
+        (self.path / 'components' / 'linked.png').symlink_to(other)
+        for name in ('spec.png', 'components/../final.png', 'components/nested/button.png',
+                     str(other), 'components/missing.png', 'components/linked.png', []):
+            with self.subTest(name=name):
+                self.roles['primary']['sourceImage'] = name
+                self.require_issue('primary.sourceImage')
+
+    def test_old_spec_source_prompts_for_component_path(self):
+        self.roles['primary']['sourceRole'] = 'spec'
+        self.require_issue('primary.sourceRole', 'sourceImage')
 
     def test_rejects_coordinates_or_tokens_unrelated_to_real_control(self):
         self.roles['primary']['box'] = [0, 0, 32, 32]
@@ -98,15 +114,17 @@ class PaletteTests(unittest.TestCase):
     def add_success(self, rgb):
         self.colors['successColor'] = rgb
         self.rects.append((32, 40, 16, 12, rgb))
-        write_pixels(self.path / 'spec.png', [(12, 12, 30, 30, rgb)])
+        write_pixels(self.path / 'components' / 'status.png', [(12, 12, 30, 30, rgb)])
         entry = evidence('successColor', (32, 40, 16, 12), (20, 20))
-        entry.update(meaning='Record saved after confirmation', sourceRole='spec')
+        entry.update(meaning='Record saved after confirmation', sourceImage='components/status.png')
         self.data['palette']['success'] = {'read': [entry]}
         return entry
 
     def test_success_is_small_local_and_source_verified(self):
         status = self.add_success(self.green)
-        self.assertEqual(self.run_check()[0], [])
+        errors, samples = self.run_check()
+        self.assertEqual(errors, [])
+        self.assertEqual(samples[0]['sourceImage'], 'components/status.png')
         self.rects.append((61, 80, 8, 8, self.green))
         self.require_issue('palette.states.read', '#2B8341')
         self.rects.pop()

@@ -1,6 +1,5 @@
 """Read offline image evidence. PNG samples use native, 1x image coordinates."""
 
-import hashlib
 import re
 import struct
 import zlib
@@ -23,10 +22,9 @@ def require(condition, reason):
 
 
 class Dimensions:
-    def __init__(self, width, height, fingerprint):
+    def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.fingerprint = fingerprint
 
     def rgb(self, x, y):
         raise ValueError("pixel sampling requires a PNG opened with pixels=True")
@@ -41,8 +39,8 @@ def paeth(left, above, upper_left):
 
 
 class PngPixels(Dimensions):
-    def __init__(self, width, height, fingerprint, color, data, palette, transparency):
-        super().__init__(width, height, fingerprint)
+    def __init__(self, width, height, color, data, palette, transparency):
+        super().__init__(width, height)
         self.color = color
         self.data = data
         self.palette = palette
@@ -208,19 +206,9 @@ def read_png(blob, pixels):
 
     require(previous == b"IEND" and decoder.eof and len(data) == total, "incomplete PNG image or scanlines")
     require(max(data[::stride]) <= 4, "invalid PNG scanline filter")
-    # Ignore ancillary text, IDAT segmentation, and compression level. Different
-    # scanline filters/color encodings may still hash differently; region_differs
-    # compares decoded visible pixels for the revision decision.
-    indexed_palette = palette if color == 3 else b""
-    digest = hashlib.sha256(struct.pack(">IIBBHH", width, height, depth, color,
-                                        len(indexed_palette), len(transparency)))
-    digest.update(indexed_palette)
-    digest.update(transparency)
-    digest.update(data)
-    fingerprint = digest.hexdigest()
     if pixels:
-        return PngPixels(width, height, fingerprint, color, data, palette, transparency)
-    return Dimensions(width, height, fingerprint)
+        return PngPixels(width, height, color, data, palette, transparency)
+    return Dimensions(width, height)
 
 
 def read_jpeg(blob):
@@ -248,7 +236,7 @@ def read_jpeg(blob):
             require(length >= 8 and frame is None, "invalid or repeated JPEG frame")
             height, width, channels = struct.unpack_from(">HHB", blob, pos + 3)
             require(width and height and channels and length == 8 + 3 * channels, "invalid JPEG frame dimensions")
-            frame = Dimensions(width, height, hashlib.sha256(blob).hexdigest())
+            frame = Dimensions(width, height)
         elif marker == 0xda:
             require(frame and length >= 8 and length == 6 + 2 * blob[pos + 2], "invalid JPEG scan header")
             start = pos + length

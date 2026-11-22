@@ -1,6 +1,5 @@
 """Exercise the design lint CLI with synthetic artwork in a temporary directory."""
 
-import hashlib
 import json
 import shutil
 import struct
@@ -59,54 +58,42 @@ def write_screen(path, variant, *, ink=INK, width=WIDTH, height=HEIGHT, rgba=Fal
                      + png_chunk(b"IDAT", zlib.compress(pixels)) + png_chunk(b"IEND", b""))
 
 
+def write_button(path, *, focused=True, width=86, height=44):
+    rows = []
+    for y in range(height):
+        row = bytearray()
+        for x in range(width):
+            color = (80, 132, 193) if focused else PAPER
+            if 3 <= x < 83 and 3 <= y < 41:
+                color = ACTION
+            if 11 <= x < 26 and 19 <= y < 25:
+                color = PAPER
+            row.extend(color)
+        rows.append(b"\x00" + row)
+    header = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    path.write_bytes(b"\x89PNG\r\n\x1a\n" + png_chunk(b"IHDR", header)
+                     + png_chunk(b"IDAT", zlib.compress(b"".join(rows))) + png_chunk(b"IEND", b""))
+
+
 def sample_manifest():
     """The strings describe a fictional review flow used only as test input."""
     return {
         "task": "A catalog editor compares the source caption and accepts a corrected date.",
-        "reference": {
-            "case": "shadcn-ui", "image": "reference.png", "source": "Quarry investigation screen from the method snapshot",
-            "views": {
-                "final": {"box": [0, 100, 288, 650], "observed": "The list of issues occupies a separate left rail.",
-                          "apply": "The catalog index stays visible next to the selected caption."},
-                "spec": {"box": [0, 200, 1400, 1000], "observed": "The button surface and text have opposite luminance.",
-                         "apply": "The corrected date is accepted with a dark filled button."},
-                "process": {"box": [0, 100, 1400, 1100], "observed": "A full investigation and a detail of the evidence occupy separate frames.",
-                            "apply": "The comparison board pairs the entire review with a crop of the date."}
-            },
-            "comparison": {
-                "layout": ["Left index occupies 33% of the catalog reader.",
-                           "Left index is reduced to 25% to make room for the date evidence."],
-                "type": ["Reference uses a 26px heading over a 16px note.",
-                         "The editor uses a 24px heading and a 14px note for the narrower panel."],
-                "color": ["White paper fills most of the reading surface, black marks the primary action.",
-                          "White paper fills 75% of the canvas, a dark fill marks the confirmation control."],
-                "spacing": ["The reference separates catalog sections by 12px.",
-                            "The editor uses 16px between evidence and decisions to group each pair."],
-            },
-        },
-        "artifacts": {"research": "research.png", "spec": "spec.png", "before": "before.png", "finalState": "review",
-                      "revisionBox": [12, 72, 32, 40],
-                      "revision": "Changed the intensity of the selected catalog index marker."},
+        "reference": {"case": "shadcn-ui"},
+        "finalState": "review",
         "states": {
             "review": {"screen": "review.png", "signal": "Source caption and revised date are visible.",
-                       "owner": "Catalog editor", "primary": "confirm", "secondary": "inspect"},
+                       "primary": "confirm", "secondary": "inspect"},
             "done": {"screen": "done.png", "signal": "The accepted date appears beside the catalog entry.",
-                     "owner": "Catalog editor", "primary": "inspect", "secondary": None,
-                     "secondaryReason": "The saved record offers a single link back to its source."},
+                     "primary": "inspect"},
         },
-        "layout": {"zones": {"index": [0, 0, 96, HEIGHT], "workspace": [96, 0, 288, HEIGHT]},
-                   "grid": "The index occupies 96px. The heading and evidence share a left edge.",
-                   "whitespace": "Space above the decision separates the original caption from the editor action."},
+        "layout": {"zones": {"index": [0, 0, 96, HEIGHT], "workspace": [96, 0, 288, HEIGHT]}},
         "type": {
-            "heading": {"family": "Inter", "size": 24, "line": 30, "weight": 600,
-                        "use": "Selected catalog heading"},
-            "body": {"family": "Inter", "size": 14, "line": 20, "weight": 400,
-                     "use": "Evidence caption and action label"},
+            "heading": {"family": "Inter", "size": 24, "line": 30, "weight": 600},
+            "body": {"family": "Inter", "size": 14, "line": 20, "weight": 400},
         },
-        "colors": {"ink": {"hex": "#2c2e34", "use": "Title and catalog text"},
-                   "paper": {"hex": "#ffffff", "use": "Document background and inverse text"},
-                   "side": {"hex": "#fafafa", "use": "Index rail background"},
-                   "action": {"hex": "#202020", "use": "Confirmation button surface"}},
+        "colors": {"ink": {"hex": "#2c2e34"}, "paper": {"hex": "#ffffff"},
+                   "side": {"hex": "#fafafa"}, "action": {"hex": "#202020"}},
         "palette": {"states": {
             state: {
                 "window": {"token": "paper", "box": [200, 5, 170, 240], "sourceAt": [1428, 189]},
@@ -115,8 +102,8 @@ def sample_manifest():
             } for state in ("review", "done")
         }},
         "media": {"states": {
-            "review": {"reason": "Caption and date corrections are rendered as labels and numeric fields."},
-            "done": {"reason": "The saved date and its caption appear in the index as text."},
+            "review": None,
+            "done": None,
         }},
         "contrast": [
             {"state": "review", "style": "heading", "use": "Selected record heading",
@@ -126,21 +113,16 @@ def sample_manifest():
             {"state": "done", "style": "body", "use": "Open saved catalog entry",
              "fg": "paper", "bg": "action", "fgAt": [123, 130], "bgAt": [136, 130]},
         ],
-        "spacing": {"gaps": {"item": 8, "group": 16}, "density": "Tight index rows leave space around the source caption."},
-        "edges": {"width": 1, "radius": 0, "use": "Square index row and a 1px divider at the panel edge."},
-        "icons": {"used": False, "reason": "Both actions describe the date change with complete text labels."},
-        "material": {"used": False, "reason": "Opaque surfaces preserve legibility of the original date annotation."},
+        "spacing": {"gaps": {"item": 8, "group": 16}},
+        "edges": {"width": 1, "radius": 0},
+        "icons": {"used": False},
+        "material": {"used": False},
         "components": {
             "confirm": {
-                "role": "Filled confirmation button accepts the revised date and disappears after saving.",
-                "states": ["review"],
+                "role": "Accept corrected date", "states": ["review"],
                 "variants": {
-                    "default": {"when": "An editor has entered a corrected date.",
-                                "appearance": "A dark rectangle contains the white confirmation label.",
-                                "on": "review", "box": [109, 109, 86, 44]},
-                    "focus": {"when": "Tab moves keyboard focus onto the confirmation control.",
-                              "appearance": "A blue outer ring surrounds the filled button.",
-                              "on": "research", "box": [109, 109, 86, 44]},
+                    "default": {"on": "review", "box": [109, 109, 86, 44]},
+                    "focus": {"image": "components/focus.png"},
                 },
             },
             "inspect": {"role": "Source link opens the original caption in each catalog state.",
@@ -155,19 +137,18 @@ class DesignLintTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.folder = Path(temporary.name) / "delivery"
         self.folder.mkdir()
-        for variant, name in enumerate(("research", "before", "review", "done"), start=1):
-            write_screen(self.folder / (name + ".png"), variant)
-        write_screen(self.folder / "spec.png", 5)
+        (self.folder / "components").mkdir()
+        self.focus = self.folder / "components" / "focus.png"
+        write_button(self.focus)
+        write_screen(self.folder / "review.png", 3)
+        write_screen(self.folder / "done.png", 4)
+        (self.folder / "process.md").write_text("Kept the source and corrected dates side by side.\n", encoding="utf-8")
         self.manifest = sample_manifest()
-        self.case = TOOLS.parent / "examples" / "shadcn-ui"
-        shutil.copyfile(self.case / "final.png", self.folder / "reference.png")
-        for role, entry in self.manifest["reference"]["views"].items():
-            entry["sha256"] = hashlib.sha256((self.case / (role + ".png")).read_bytes()).hexdigest()
 
-    def lint(self):
-        manifest = self.folder / "design-system.json"
-        manifest.write_text(json.dumps(self.manifest), encoding="utf-8")
-        result = subprocess.run([sys.executable, str(TOOLS / "design_lint.py"), str(manifest), "--json"],
+    def lint(self, *options, raw=None):
+        manifest = self.folder / "spec.json"
+        manifest.write_text(json.dumps(self.manifest) if raw is None else raw, encoding="utf-8")
+        result = subprocess.run([sys.executable, str(TOOLS / "design_lint.py"), str(manifest), "--json", *options],
                                 capture_output=True, text=True, timeout=20)
         try:
             report = json.loads(result.stdout)
@@ -188,6 +169,7 @@ class DesignLintTests(unittest.TestCase):
         self.assertTrue(report["ok"], report["errors"])
         self.assertEqual(report["errors"], [])
         self.assertTrue(report["manualReview"])
+        self.assertEqual(set(report["layoutSamples"]), {"review", "done"})
         heading, button, saved = report["contrastSamples"]
         self.assertEqual(saved["state"], "done")
         self.assertEqual(heading["actual"], ["#2c2e34", "#ffffff"])
@@ -205,47 +187,29 @@ class DesignLintTests(unittest.TestCase):
 
     def test_field_name_and_placeholder(self):
         self.manifest["task"] = "task"
-        self.manifest["reference"]["comparison"]["layout"][1] = "TODO: supply a 25% layout estimate"
+        self.manifest["states"]["review"]["signal"] = "TODO"
         self.assert_issue("task")
-        self.assert_issue("layout")
+        self.assert_issue("signal")
 
-    def test_case_command_identifies_each_original(self):
-        for case in ("linear", "shadcn-ui", "apple-glass"):
-            with self.subTest(case=case):
-                result = subprocess.run(
-                    [sys.executable, str(TOOLS / "design_lint.py"), "--case", case, "--json"],
-                    check=True, capture_output=True, text=True, timeout=20)
-                views = json.loads(result.stdout)["views"]
-                self.assertEqual(set(views), {"final", "spec", "process"})
-                for role, item in views.items():
-                    path = TOOLS.parent / "examples" / case / (role + ".png")
-                    self.assertEqual(item["sha256"], hashlib.sha256(path.read_bytes()).hexdigest())
-                    self.assertEqual(str(path.relative_to(TOOLS.parent)), item["image"])
-        del self.manifest["reference"]["image"]
-        self.assertTrue(self.lint()["ok"])
+    def test_first_draft_only_needs_one_screen(self):
+        self.manifest = {"states": {"draft": {"screen": "review.png"}}}
+        report = self.lint("--layout-only")
+        self.assertTrue(report["ok"], report)
+        self.assertIn("draft", report["layoutSamples"])
+        self.assertFalse(self.lint()["ok"])
+
+    def test_malformed_json_returns_diagnostic(self):
+        for raw in ('{"states": {}, "states": {}}', '{"unused": NaN}', '[]', '{'):
+            with self.subTest(raw=raw):
+                errors = self.lint("--layout-only", raw=raw)["errors"]
+                self.assertEqual(errors[0]["path"], "$")
+                self.assertTrue(errors[0]["message"])
 
     def test_case_requires_exactly_one_allowed_example(self):
         for case in ("unknown-case", ["linear", "apple-glass"], "../evidence"):
             with self.subTest(case=case):
                 self.manifest["reference"]["case"] = case
                 self.assert_issue("reference.case")
-
-    def test_missing_or_extra_view(self):
-        views = self.manifest["reference"]["views"]
-        views["revision"] = views.pop("process")
-        report = self.lint()
-        self.assertEqual(
-            {error["path"] for error in report["errors"]},
-            {"reference.views.process", "reference.views.revision"})
-
-    def test_role_fingerprints_are_bound_to_the_selected_case(self):
-        views = self.manifest["reference"]["views"]
-        views["spec"]["sha256"] = views["process"]["sha256"]
-        other = self.case.parent / "linear" / "final.png"
-        views["final"]["sha256"] = hashlib.sha256(other.read_bytes()).hexdigest()
-        shutil.copyfile(other, self.folder / "reference.png")
-        errors = {error["path"] for error in self.lint()["errors"]}
-        self.assertEqual(errors, {"reference.image", "reference.views.spec.sha256", "reference.views.final.sha256"})
 
     def test_full_delivery_checks_media_before_exempting_artwork_colors(self):
         box = [250, 55, 75, 63]
@@ -266,58 +230,31 @@ class DesignLintTests(unittest.TestCase):
         self.assertFalse(report["mediaSamples"][0]["outsideUnchanged"])
         self.assertTrue(any("117, 120" in e["message"] for e in report["errors"]))
 
-    def test_observations_and_decisions_are_specific_to_each_view(self):
-        views = self.manifest["reference"]["views"]
-        views["final"]["observed"] = "TODO: inspect the sidebar"
-        views["spec"]["apply"] = views["process"]["apply"]
-        views["spec"]["box"] = [0, 0, 40000, 20]
-        views["process"]["observed"] = "same as reference"
-        errors = {error["path"] for error in self.lint()["errors"]}
-        self.assertTrue({"reference.views.final.observed", "reference.views.spec.box",
-                         "reference.views.process.observed", "reference.views.process.apply"} <= errors, errors)
-
-    def test_reference_path_cannot_leave_package(self):
+    def test_export_path_cannot_leave_package(self):
         external = self.folder.parent / "external.png"
-        shutil.copyfile(self.folder / "reference.png", external)
+        shutil.copyfile(self.folder / "review.png", external)
         (self.folder / "link.png").symlink_to(external)
         for locator in ("../external.png", "link.png", str(external)):
             with self.subTest(locator=locator):
-                self.manifest["reference"]["image"] = locator
-                self.assert_issue("reference")
+                self.manifest["states"]["review"]["screen"] = locator
+                self.assert_issue("states.review.screen")
 
-    def test_reference_requires_an_existing_image(self):
-        image = self.folder / "reference.png"
-        image.unlink()
-        self.assert_issue("reference.image")
-        image.write_text("Controlled test data with a misleading PNG extension.")
-        self.assert_issue("reference.image")
+    def test_process_is_nonempty_markdown(self):
+        (self.folder / "process.md").unlink()
+        self.assert_issue("process")
+        self.manifest["process"] = "review.png"
+        self.assert_issue("process")
+        self.manifest["process"] = "decisions.md"
+        (self.folder / "decisions.md").write_text("  ")
+        self.assert_issue("process")
+        (self.folder / "decisions.md").write_text("The date appears alongside the source caption.")
+        self.assertTrue(self.lint()["ok"])
 
     def test_action_must_exist_in_that_state(self):
         self.manifest["states"]["done"]["primary"] = "absent"
         self.assert_issue("primary", "components")
         self.manifest["states"]["done"]["primary"] = "confirm"
         self.assert_issue("primary", "components", "states.done")
-
-    def test_copied_reference_or_state_image(self):
-        for name in ("reference.png", "done.png"):
-            with self.subTest(name=name):
-                original = (self.folder / name).read_bytes()
-                shutil.copyfile(self.folder / "review.png", self.folder / name)
-                self.assert_issue("reference", "states", "artifacts")
-                (self.folder / name).write_bytes(original)
-
-    def test_specification_board_is_an_independent_export(self):
-        artifacts = self.manifest["artifacts"]
-        spec = artifacts.pop("spec")
-        self.assert_issue("artifacts.spec")
-        artifacts["specimens"] = spec
-        self.assertTrue(self.lint()["ok"])
-        del artifacts["specimens"]
-        for other in ("research.png", "before.png", "review.png"):
-            with self.subTest(other=other):
-                artifacts["spec"] = other
-                self.assertTrue(any(e["path"] == "artifacts.spec" and "重复" in e["message"]
-                                    for e in self.lint()["errors"]))
 
     def test_reencoded_duplicate_state(self):
         for options in ({"rgba": True}, {"up_filter": True}):
@@ -331,21 +268,27 @@ class DesignLintTests(unittest.TestCase):
             focus = variants.pop("focus")
             self.assert_issue("variants", "components.confirm")
             variants["focus"] = focus
+        with self.subTest("missing component"):
+            focus["image"] = "components/absent.png"
+            self.assert_issue("variants.focus.image")
         with self.subTest("unknown evidence screen"):
-            focus["on"] = "unavailable"
-            self.assert_issue("variants", "components.confirm")
-            focus["on"] = "research"
+            variants["focus"] = {"on": "unavailable", "box": [0, 0, 86, 44]}
+            self.assert_issue("variants.focus.on")
         with self.subTest("same pixels relabeled as a focus state"):
-            focus["on"] = "review"
-            self.assert_issue("variants", "components.confirm")
-            focus["on"] = "research"
-        with self.subTest("variant outside screen"):
-            focus["box"] = [WIDTH, 2, 80, 30]
-            self.assert_issue("variants", "components.confirm")
+            variants["focus"] = dict(variants["default"])
+            self.assert_issue("variants.focus.box")
+        with self.subTest("standalone PNG must visibly differ"):
+            write_button(self.focus, focused=False)
+            variants["focus"] = {"image": "components/focus.png"}
+            self.assert_issue("variants.focus.image")
+        with self.subTest("mismatched crop size"):
+            write_button(self.focus, width=42, height=20)
+            variants["focus"] = {"image": "components/focus.png"}
+            self.assert_issue("variants.focus")
 
     def test_terminal_final_screen_still_requires_action_variants(self):
-        self.manifest["artifacts"]["finalState"] = "done"
-        self.manifest["states"]["done"].update(primary=None, primaryReason="The accepted date is locked after saving.")
+        self.manifest["finalState"] = "done"
+        del self.manifest["states"]["done"]["primary"]
         report = self.lint()
         self.assertTrue(report["ok"], report["errors"])
         del self.manifest["components"]["confirm"]["variants"]
@@ -375,14 +318,6 @@ class DesignLintTests(unittest.TestCase):
         write_screen(self.folder / "review.png", 3, ink=(172, 172, 172))
         self.manifest["colors"]["ink"]["hex"] = "#acacac"
         self.assert_issue("contrast")
-
-    def test_revision_requires_same_dimensions(self):
-        write_screen(self.folder / "before.png", 2, width=WIDTH+1)
-        self.assert_issue("before", "revision", "artifacts")
-
-    def test_revision_requires_change_in_the_stated_area(self):
-        self.manifest["artifacts"]["revisionBox"] = [112, 24, 28, 16]
-        self.assert_issue("revision", "artifacts")
 
     def test_geometry_and_sample_bounds(self):
         self.manifest["layout"]["zones"]["index"] = [-1, 0, 96, HEIGHT]

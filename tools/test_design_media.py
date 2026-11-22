@@ -74,7 +74,7 @@ class MediaTests(unittest.TestCase):
 
     def test_duplicate_one_pixel_limited_area_and_insignificant_deltas(self):
         for changes, expected in [
-            ([(BOX, ART)], "重复"),
+            ([(BOX, ART)], "只有 0 个像素"),
             ([(BOX, ART), ((10, 10, 1, 1), SWAP)], "只有 1 个像素"),
             ([(BOX, ART), ((10, 10, 3, 3), SWAP)], "至少需要 10 个"),
             ([(BOX, (101, 130, 40))], "只有 0 个像素"),
@@ -86,7 +86,7 @@ class MediaTests(unittest.TestCase):
     def test_invisible_transparency_changes_do_not_count(self):
         draw(self.folder / "review.png", [(BOX, ART + (0,))], rgba=True)
         draw(self.alt, [(BOX, SWAP + (0,))], rgba=True)
-        self.assert_failure("重复")
+        self.assert_failure("只有 0 个像素")
 
     def test_wide_overlapping_or_out_of_bounds_exclusions(self):
         for boxes, expected in [
