@@ -11,27 +11,35 @@ from pathlib import Path
 TOOLS = Path(__file__).resolve().parent
 
 
+def bridge_request(method, path, payload=None, timeout=290):
+    # Connect directly to the paired local bridge, including when an HTTP proxy is set.
+    with closing(http.client.HTTPConnection("127.0.0.1", 18787, timeout=timeout)) as conn:
+        body = json.dumps(payload).encode() if payload is not None else None
+        headers = {"Content-Type": "application/json"} if body is not None else {}
+        conn.request(method, path, body=body, headers=headers)
+        response = conn.getresponse()
+        result = json.load(response)
+    if not isinstance(result, dict):
+        raise ValueError("Figmosha 返回内容缺少执行结果")
+    if response.status != 200 or result.get("ok") is False:
+        raise ValueError(f"Figmosha HTTP {response.status}, {result.get('error') or response.reason}")
+    return result
+
+
 def check_page(target, page):
     scripts = [TOOLS.joinpath(name).read_text(encoding="utf-8")
                for name in ("figma_flow.js", "check_design_page.js")]
     options = json.dumps({"page": page} if page else {})
     scripts.append(f"return await checkDesignPage(figma, {options})")
-    body = json.dumps({
+    result = bridge_request("POST", "/exec", {
         "target": target,
         "agent": "Figma 设计页只读检查",
         "code": "\n".join(scripts),
         "timeout": 120,
         "queue_timeout": 160,
-    }).encode()
-    # Connect directly to the paired local bridge, including when an HTTP proxy is set.
-    with closing(http.client.HTTPConnection("127.0.0.1", 18787, timeout=290)) as conn:
-        conn.request("POST", "/exec", body=body, headers={"Content-Type": "application/json"})
-        response = conn.getresponse()
-        result = json.load(response)
-    if not isinstance(result, dict):
-        raise ValueError("Figmosha 返回内容缺少执行结果")
-    if response.status != 200 or result.get("ok") is not True:
-        raise ValueError(f"Figmosha HTTP {response.status}, {result.get('error') or response.reason}")
+    })
+    if result.get("ok") is not True:
+        raise ValueError("Figmosha 返回内容缺少执行状态")
     report = result.get("value")
     if not isinstance(report, dict) or not isinstance(report.get("page"), dict):
         raise ValueError("检查器返回内容缺少页面信息")

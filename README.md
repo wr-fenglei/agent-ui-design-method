@@ -10,6 +10,10 @@
 
 三个历史成稿可检查图层和可见功能, 未绑定原型跳转, 新设计要把可操作的评审流程连接起来
 
+网页打不开或 `figmosha targets` 报本地锁错误时, 在已配对 Figmosha 的电脑上从仓库根目录运行 `python3 tools/read_figma_examples.py`, 命令按示例列出上表 10 个原生节点的名称、可用尺寸和抽样文字或子层, 读取不全时返回非零退出码, 文件未配对时按输出提示打开对应原稿和插件后重试
+
+用节点 ID 定位整屏和组件规范, 在 Figma 画布查看队列、选中项、详情和审阅操作的位置关系, 再与规范板上的组件和产品实物逐项对照
+
 开始制作时读[工作步骤](SKILL.md), 进入原稿和规范板逐项查看, 需要继续找实物时用 [Linear 原始素材](sources/linear/README.md)、[shadcn/ui 官网组件截图](sources/shadcn-ui/README.md) 和 [Apple 官方材料](sources/apple-glass/README.md), 原型和排版的自动检查见[检查说明](docs/lint.md)
 
 有新业务时按功能补真实产品参考, 例如这组[多语言审阅与发布实物](sources/localization/README.md)收录 Xcode、Weblate、Mozilla Pontoon 及 GitHub 的 8 张截图, 可对照字符串编辑、建议差异和发布回归

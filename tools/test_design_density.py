@@ -2,6 +2,7 @@
 
 import contextlib
 import io
+import json
 import struct
 import tempfile
 import unittest
@@ -11,6 +12,7 @@ from unittest.mock import patch
 
 from design_density import analyze_layout, check_density, main
 from design_images import load_image
+from design_lint import main as manifest_main
 
 
 class Screen:
@@ -83,6 +85,34 @@ class LayoutTests(unittest.TestCase):
                          [("repeated-dividers", [60, 115, 170, 225, 280])])
         self.assertEqual(result[0]["inkHeights"], [11]*4)
 
+    def test_three_dividers_prompt_review_only_for_the_short_two_column_run(self):
+        screen = Screen(720, 270)
+        # The two regions deliberately put the field list and the comparison
+        # table on the same surface. Both have aligned text above the first line.
+        for left, width, columns, first, pitch in [
+            (24, 270, (28, 116), 71, 36),
+            (358, 334, (366, 468, 580), 86, 45),
+        ]:
+            for i in range(3):
+                y = first + i * pitch
+                for x in columns:
+                    screen.words(x, y - 22)
+                screen.rect(left, y, width, 2, 202)
+
+        # With only one enclosed row, the field list has no repeated row evidence.
+        screen.rect(24, 143, 270, 2, 250)
+        report = self.scan(screen)
+        self.assertEqual(report["findings"], [])
+        self.assertEqual(report["manualReview"], [])
+
+        screen.rect(24, 143, 270, 2, 202)
+        report = self.scan(screen)
+        self.assertEqual(report["findings"], [])
+        note, = report["manualReview"]
+        self.assertIn("[24, 71, 270, 74]", note)
+        self.assertIn("y=[71, 107, 143]", note)
+        self.assertIn("墨迹高 [11, 11] px", note)
+
     def test_three_comparison_columns_and_wrapped_text_are_not_sparse_field_rows(self):
         for columns, wrapped in [((38, 140, 290), False), ((38, 140), True)]:
             screen = Screen()
@@ -94,7 +124,9 @@ class LayoutTests(unittest.TestCase):
         screen.fields()
         screen.words(38, 39)
         screen.words(140, 39)
-        self.assertEqual(self.scan(screen)["findings"], [])
+        report = self.scan(screen)
+        self.assertEqual(report["findings"], [])
+        self.assertEqual(report["manualReview"], [])
 
     def test_verified_media_only_clears_a_finding_that_changed_inside_the_box(self):
         original = Screen()
@@ -225,6 +257,22 @@ class LayoutTests(unittest.TestCase):
         with patch('sys.argv', ['design_density.py', str(path)]), contextlib.redirect_stdout(output):
             self.assertEqual(main(), 1)
         self.assertIn('repeated-dividers [30, 60, 480, 221]', output.getvalue())
+
+    def test_manual_divider_review_is_visible_from_both_text_clis(self):
+        screen = Screen()
+        screen.fields()
+        for y in (60, 115):
+            screen.rect(30, y, 480, 1, 250)
+        image = screen.save(self.tmp / "short.png")
+        manifest = self.tmp / "screens.json"
+        manifest.write_text(json.dumps({"states": {"draft": {"screen": image.name}}}))
+        for cli, argv in [(main, ["design_density.py", str(image)]),
+                          (manifest_main, ["design_lint.py", str(manifest), "--layout-only"])]:
+            output = io.StringIO()
+            with patch("sys.argv", argv), contextlib.redirect_stdout(output):
+                self.assertEqual(cli(), 0)
+            self.assertIn("横线组 [30, 170, 480, 111]", output.getvalue())
+            self.assertIn("需人工复核", output.getvalue())
 
 
 if __name__ == "__main__":

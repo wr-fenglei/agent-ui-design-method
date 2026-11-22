@@ -207,7 +207,9 @@ def line_families(rules):
 
 def divider_findings(rows, rules):
     findings = []
+    manual_review = []
     for family in line_families(rules):
+        runs = []
         simple = []
         head = family[0]
         for first, second in zip(family, family[1:]):
@@ -231,7 +233,7 @@ def divider_findings(rows, rules):
             # from a bordered table or a row with several comparison columns.
             row = bands[0] if len(bands) == 1 and bands[0].is_text() else None
             cols = column_runs(row.columns) if row else []
-            if (len(cols) != 2 or gap < 36 or row.height > 0.42 * gap
+            if (len(cols) != 2 or second.top - first.top < 36 or row.height > 0.42 * gap
                     or cols[1][0] - left > (right - left) * 0.45
                     or right - cols[-1][1] < (right - left) * 0.18):
                 simple = []
@@ -239,28 +241,36 @@ def divider_findings(rows, rules):
             starts = [p[0] for p in cols]
             if simple and max(abs(a - b) for a, b in zip(simple[0][3], starts)) > 8:
                 simple = []
+            if not simple:
+                runs.append((head, simple))
             simple.append((first, second, row.height, starts))
-            if len(simple) >= 3:
-                # A visible header with these same column anchors establishes
-                # a comparison grid even if it has only two columns.
-                above = content_bands(rows, left, right, max(0, head.top - 40),
-                                      head.top, head.background)
-                if above and above[-1].is_text() and head.top - above[-1].bottom <= 20:
-                    headers = column_runs(above[-1].columns)
-                    if len(headers) == 2 and all(abs(col[0] - x) <= 8 for col, x in zip(headers, starts)):
-                        continue
-                edges = [simple[0][0].top] + [s[1].top for s in simple]
-                heights = [s[2] for s in simple]
-                box = (left, edges[0], right - left, second.bottom - edges[0])
-                item = finding("repeated-dividers", box,
-                               f"{len(edges)} 条开放横线分隔 {len(simple)} 行两列短内容, "
-                               f"行内墨迹高 {min(heights)}–{max(heights)} px",
-                               linesY=edges, inkHeights=heights, columnStarts=starts)
-                if findings and findings[-1].get("linesY") == edges[:-1]:
-                    findings[-1] = item
-                else:
-                    findings.append(item)
-    return findings
+        for head, run in runs:
+            if len(run) < 2:
+                continue
+            lines = [run[0][0], *(entry[1] for entry in run)]
+            left = max(line.left for line in lines)
+            right = min(line.right for line in lines)
+            edges = [line.top for line in lines]
+            heights = [entry[2] for entry in run]
+            starts = run[0][3]
+            box = [left, edges[0], right - left, lines[-1].bottom - edges[0]]
+            # Three strokes enclose just two rows. A third pair of aligned
+            # labels above the first stroke could be either data or a header.
+            if len(run) == 2:
+                manual_review.append(
+                    f"横线组 {box}, y={edges}, 横线之间两行文字均分两列, 墨迹高 {heights} px, "
+                    "请核对是否需要表头逐列比较, 并在 1× 图对照去掉字段间横线后的可读性")
+                continue
+            above = content_bands(rows, left, right, max(0, head.top - 40), head.top, head.background)
+            if above and above[-1].is_text() and head.top - above[-1].bottom <= 20:
+                headers = column_runs(above[-1].columns)
+                if len(headers) == 2 and all(abs(col[0] - x) <= 8 for col, x in zip(headers, starts)):
+                    continue
+            findings.append(finding("repeated-dividers", box,
+                                    f"{len(edges)} 条开放横线分隔 {len(run)} 行两列短内容, "
+                                    f"行内墨迹高 {min(heights)}–{max(heights)} px",
+                                    linesY=edges, inkHeights=heights, columnStarts=starts))
+    return findings, manual_review
 
 
 def panel_intervals(rows, spans):
@@ -350,9 +360,12 @@ def analyze_layout(image):
     spans = flat_spans(rows)
     rules = horizontal_rules(rows, spans)
     panels, inspected = visible_panel_findings(rows, panel_intervals(rows, spans))
+    dividers, manual_review = divider_findings(rows, rules)
+    if not inspected:
+        manual_review.append("未识别可连续测量文字间距的平面容器, 请按 1× 图检查栏内实际内容间距")
     return {"size": [image.width, image.height],
-            "findings": [*panels, *divider_findings(rows, rules)],
-            "manualReview": [] if inspected else ["未识别可连续测量文字间距的平面容器, 请按 1× 图检查栏内实际内容间距"],
+            "findings": [*panels, *dividers],
+            "manualReview": manual_review,
             "measurements": {"panels": inspected,
                              "openRules": [[r.left, r.top, r.right - r.left, r.bottom - r.top]
                                            for r in rules]}}
@@ -494,7 +507,8 @@ def main():
             print(f"{item['rule']} {item['box']}  {item['message']}")
         for note in report["manualReview"]:
             print(note)
-        print(f"检查 {args.screen.name}, {len(report['findings'])} 项待处理")
+        print(f"检查 {args.screen.name}, {len(report['findings'])} 项自动发现, "
+              f"{len(report['manualReview'])} 项需人工复核")
     return int(bool(report["findings"]))
 
 
